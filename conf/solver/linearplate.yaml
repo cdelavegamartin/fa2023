@@ -1,0 +1,9 @@
+defaults:
+  - damping: constant
+  - _self_
+
+name: linearplate
+gamma: 100
+kappa: 0.1
+num_state_variables: 2
+

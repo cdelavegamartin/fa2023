@@ -1,0 +1,33 @@
+defaults:
+  - nnarch: basic
+  - solver: linearplate
+  - override hydra/launcher: joblib
+  - _self_
+
+hydra:
+  run:
+    dir: output/${hydra.job.name}/${now:%Y-%m-%d_%H-%M-%S}
+  job:
+    chdir: True
+
+domain:
+  nx: 40 # assume lx=1.0
+  aspect_ratio: 0.95 # ny/nx
+  sampling_rate: 48000
+
+
+train:
+  device: cuda
+  epochs: 50
+  batch_size: 10
+  random_seed: 0
+  num_variations: 10
+  num_steps_train: 4
+  val_split: 0.1
+  optimizer:
+    name: AdamW
+    lr: 0.001
+    weight_decay: 0.0001
+  scheduler:
+    name: OneCycleLR
+    max_lr: 0.001

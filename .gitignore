@@ -1,0 +1,12 @@
+
+# cache files
+*__pycache__*
+*ipynb_checkpoints*
+*.asv
+
+# Output directories
+output/
+
+# HPC job files
+hpc/**/*.job
+*.job.*

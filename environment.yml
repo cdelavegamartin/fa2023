@@ -1,0 +1,21 @@
+name: platefno
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+  - default
+dependencies:
+  - python=3.9
+  - pip
+  - numpy
+  - ipykernel
+  - nvidia::cudatoolkit=11.6
+  - pytorch::pytorch=2.0.0
+  - matplotlib
+  - scipy
+  - black
+  - hydra-core
+  - pandas
+  - pyarrow
+  - pip:
+    - hydra-joblib-launcher

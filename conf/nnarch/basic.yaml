@@ -1,0 +1,6 @@
+# This depth is the internal number of channels for the three networks, 
+# but depth only applies to the Markov FNO and the RNN
+depth: 3
+width: 8
+
+    
