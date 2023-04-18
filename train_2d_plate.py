@@ -85,10 +85,12 @@ def train(cfg: DictConfig) -> None:
 
     # Generate training data
     for i in range(num_variations):
-        ctr = 0.3 * np.random.rand(2) + 0.5
-        wid = np.random.rand(1) * 0.15
-        u0_max = np.random.rand(1)
-        v0_max = 0.0
+        ctr = (
+            0.6 * np.random.rand(2) + 0.2
+        )  # Center of the pluck, between 0.2 and 0.8, relative to the plate side lengths
+        wid = np.random.rand(1) * 0.15  # Width of the pluck, between 0 and 0.15
+        u0_max = np.random.rand(1)  # Maximum displacement of the pluck
+        v0_max = 0.0  # Maximum velocity of the pluck
         w0 = solver.create_pluck(ctr, wid, u0_max, v0_max)
         u, v, _ = solver.solve(w0)
         training_input[i, :, :, :, :] = torch.tensor(
