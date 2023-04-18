@@ -13,12 +13,21 @@ import matplotlib.pyplot as plt
 
 @hydra.main(version_base=None, config_path="conf", config_name="config")
 def train(cfg: DictConfig) -> None:
+    """Train 3 variants of the Fourier Neural Operator (FNO) to solve the 2D plate equation"""
+
     hydra_cfg = hydra.core.hydra_config.HydraConfig.get()
 
+    # Training parameters
     num_steps_train = cfg.train.num_steps_train
     num_variations = cfg.train.num_variations
     validation_split = cfg.train.val_split
+    epochs = cfg.train.epochs
+    batch_size = cfg.train.batch_size
+    device = torch.device(cfg.train.device)  # Set torch device
+    torch.manual_seed(cfg.train.random_seed)  # Set seed for reproducibility
+    np.random.seed(cfg.train.random_seed)
 
+    # Solver and domain parameters
     fs = cfg.domain.sampling_rate
     dur = num_steps_train / fs
     gamma = cfg.solver.gamma
@@ -39,19 +48,11 @@ def train(cfg: DictConfig) -> None:
     aspect_ratio = cfg.domain.aspect_ratio
     Nx = cfg.domain.nx
 
-    epochs = cfg.train.epochs
-    print("\r", f"Starting training for {epochs} epochs", end="")
-
+    # Neural network parameters
     width = cfg.nnarch.width
-
-    # Set torch device
-    device = torch.device(cfg.train.device)
-    batch_size = cfg.train.batch_size
 
     num_example_timesteps = 100
 
-    torch.manual_seed(cfg.train.random_seed)  # Set seed for reproducibility
-    np.random.seed(cfg.train.random_seed)
     #######################################################################################################################
     # The solver is used to generate the training data
     solver = LinearPlateSolver(
@@ -76,12 +77,6 @@ def train(cfg: DictConfig) -> None:
             cfg.solver.num_state_variables,
         )
     )
-    # This is not the actual training shape, but the shape of the input and output of the solver
-    # The actual training shape is ((1-validation_split)*num_variations, num_timesteps, num_x, num_y, num_channels)
-    print("\n")
-    print(f"training input shape:{training_input.shape}")
-    print(f"training output shape:{training_output.shape}")
-    print("\n")
 
     # Generate training data
     for i in range(num_variations):
@@ -115,7 +110,7 @@ def train(cfg: DictConfig) -> None:
     training_input = training_input[:-num_validation, ...]
     training_output = training_output[:-num_validation, ...]
 
-    learning_rate = 1e-4
+    # Instantiate the models
     print(f"Instantiate GRU model")
     model_gru = torch.nn.DataParallel(
         FNO_GRU_2d(
@@ -149,6 +144,7 @@ def train(cfg: DictConfig) -> None:
         )
     ).to(device)
 
+    # List of all parameters to be optimzed, also for gradient clipping
     params = (
         list(model_gru.parameters())
         + list(model_rnn.parameters())
@@ -162,7 +158,7 @@ def train(cfg: DictConfig) -> None:
     # Assert that the optimizer is AdamW, otherwise the weight decay is not applied to the bias terms
     assert cfg.train.optimizer.name == "AdamW"
     optimizer = torch.optim.AdamW(
-        params, lr=learning_rate, weight_decay=cfg.train.optimizer.weight_decay
+        params, lr=cfg.train.optimizer.lr, weight_decay=cfg.train.optimizer.weight_decay
     )
     # Assert that the scheduler is OneCycleLR, otherwise the learning rate is not increased linearly
     assert cfg.train.scheduler.name == "OneCycleLR"
@@ -338,6 +334,17 @@ def train(cfg: DictConfig) -> None:
     output_sequence_rnn *= plot_norm
     output_sequence_ref *= plot_norm
 
+    # Print the maximum displace ment and velocity of the output sequences
+    print(f"output_sequence_gru.max(): {output_sequence_gru.max()}")
+    print(f"output_sequence_rnn.max(): {output_sequence_rnn.max()}")
+    print(f"output_sequence_ref.max(): {output_sequence_ref.max()}")
+
+    with open(directory + "/validation.txt", "w") as f:
+        f.write(
+            f"GRU validation MSE:{val_gru_mse:.8f} || RNN validation MSE:{val_rnn_mse:.8f} || Ref validation MSE:{val_ref_mse:.8f}"
+        )
+        f.close()
+
     fig_width = 237 / 72.27  # Latex columnwidth expressed in inches
     figsize = (fig_width, fig_width * 0.75)
     fig = plt.figure(figsize=figsize)
@@ -468,6 +475,18 @@ def train(cfg: DictConfig) -> None:
             axs[i, j].set_yticks([])
 
     plt.savefig(directory + "/2d_plate_outputs.pdf", bbox_inches="tight")
+
+    import os, shutil
+
+    print("__file__:    ", __file__)
+    dirname = os.path.join(directory, "code")
+    fname = __file__
+
+    if not os.access(dirname, os.F_OK):
+        os.mkdir(dirname, 0o700)
+
+    shutil.copy(fname, dirname)
+
     return
 
 
