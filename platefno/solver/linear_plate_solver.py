@@ -190,7 +190,7 @@ class LinearPlateSolver:
         w0 = np.squeeze(w0, axis=-1)
         return w0
 
-    def create_random_initial(self, u0max=1.0, v0max=0.0):
+    def create_random_initial(self, u0_max=1.0, v0_max=0.0):
         # create raised cosine
         # calculate disnces from center
 
@@ -362,7 +362,7 @@ if __name__ == "__main__":
     print("u[..., 0] nonzero = ", countnonzero(u[..., 0]))
 
     # fig_width = 237 / 72.27  # Latex columnwidth expressed in inches
-    fig_width = 20  # Latex columnwidth expressed in inches
+    fig_width = 20
     figsize = (fig_width, fig_width * 0.75)
     fig = plt.figure(figsize=figsize)
     gs = fig.add_gridspec(2, 3, hspace=0.0, wspace=0.05)
