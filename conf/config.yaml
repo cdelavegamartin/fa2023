@@ -18,15 +18,16 @@ domain:
 
 train:
   device: cuda
-  epochs: 50
+  epochs: 5
   batch_size: 10
   random_seed: 0
   num_variations: 10
   num_steps_train: 4
   val_split: 0.1
+  ic: pluck
   optimizer:
     name: AdamW
-    lr: 0.001
+    lr: 0.0001
     weight_decay: 0.0001
   scheduler:
     name: OneCycleLR
