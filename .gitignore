@@ -9,4 +9,5 @@ output/
 
 # HPC job files
 hpc/**/*.job
+hpc/**/*.txt
 *.job.*
