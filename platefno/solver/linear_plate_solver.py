@@ -166,18 +166,17 @@ class LinearPlateSolver:
         dist = np.sqrt(
             (self.X - ctr[0]) ** 2 + (self.Y - ctr[1] * self.aspect_ratio) ** 2
         )
-        # fig = plt.figure()
-        # ax = fig.add_subplot(111)
 
-        # ax.imshow(dist, cmap="viridis")
-        # plt.show()
         ind = np.sign(np.maximum((-dist + wid / 2.0), 0))
         rc = 0.5 * ind * (1 + np.cos(2 * np.pi * dist / wid))
-        # fig = plt.figure()
-        # ax = fig.add_subplot(111)
 
-        # ax.imshow(rc, cmap="viridis")
-        # plt.show()
+        # make sure the boundary conditions are met in the initial conditions
+        if self.bc == "clamped" or self.bc == "simply-supported":
+            rc[0, :] = 0
+            rc[-1, :] = 0
+            rc[:, 0] = 0
+            rc[:, -1] = 0
+
         self.u0 = u0_max * rc.reshape(
             -1,
             order="F",
