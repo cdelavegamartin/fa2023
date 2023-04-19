@@ -11,3 +11,7 @@ def print_hydra_config(cfg: DictConfig) -> None:
 
 def get_config(dir_name):
     return OmegaConf.load(os.path.join(dir_name, ".hydra", "config.yaml"))
+
+
+if __name__ == "__main__":
+    print_hydra_config()
