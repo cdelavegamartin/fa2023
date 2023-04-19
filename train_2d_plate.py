@@ -61,8 +61,8 @@ def test(dirname):
 
     # define parameters
 
-    ctr = (0.8, 0.5)
-    wid = 0.1
+    ctr = (0.4, 0.5)
+    wid = 0.2
     u0_max = 1.0
     v0_max = 0
 
@@ -161,7 +161,18 @@ def test(dirname):
             )
         )
         f.close()
-
+    # get maximum displacement
+    u_max = np.max(
+        np.array(
+            [
+                np.max(np.abs(u)),
+                np.max(np.abs(output_sequence_gru.detach().cpu().numpy())),
+                np.max(np.abs(output_sequence_rnn.detach().cpu().numpy())),
+                np.max(np.abs(output_sequence_ref.detach().cpu().numpy())),
+            ]
+        )
+    )
+    print("u_max = ", u_max)
     fig_width = 237 / 72.27  # Latex columnwidth expressed in inches
     figsize = (fig_width, fig_width * 0.75)
     fig = plt.figure(figsize=figsize)
@@ -180,23 +191,34 @@ def test(dirname):
     axs[0, 0].imshow(
         output_sequence_gru[0, 0, :, :, 0].detach().cpu().numpy().transpose(),
         cmap="viridis",
-        aspect="equal",
+        vmin=-u_max,
+        vmax=u_max,
+        aspect=solver.hy / solver.hx,
         interpolation="none",
     )
     axs[0, 1].imshow(
         output_sequence_rnn[0, 0, :, :, 0].detach().cpu().numpy().transpose(),
         cmap="viridis",
-        aspect="equal",
+        vmin=-u_max,
+        vmax=u_max,
+        aspect=solver.hy / solver.hx,
         interpolation="none",
     )
     axs[0, 2].imshow(
         output_sequence_ref[0, 0, :, :, 0].detach().cpu().numpy().transpose(),
         cmap="viridis",
-        aspect="equal",
+        vmin=-u_max,
+        vmax=u_max,
+        aspect=solver.hy / solver.hx,
         interpolation="none",
     )
     axs[0, 3].imshow(
-        u[..., 1].transpose(), cmap="viridis", aspect="equal", interpolation="none"
+        u[..., 1].transpose(),
+        cmap="viridis",
+        vmin=-u_max,
+        vmax=u_max,
+        aspect=solver.hy / solver.hx,
+        interpolation="none",
     )
     axs[1, 0].imshow(
         output_sequence_gru[0, display_timestep // 2, :, :, 0]
@@ -205,7 +227,9 @@ def test(dirname):
         .numpy()
         .transpose(),
         cmap="viridis",
-        aspect="equal",
+        vmin=-u_max,
+        vmax=u_max,
+        aspect=solver.hy / solver.hx,
         interpolation="none",
     )
     axs[1, 1].imshow(
@@ -215,7 +239,9 @@ def test(dirname):
         .numpy()
         .transpose(),
         cmap="viridis",
-        aspect="equal",
+        vmin=-u_max,
+        vmax=u_max,
+        aspect=solver.hy / solver.hx,
         interpolation="none",
     )
     axs[1, 2].imshow(
@@ -225,13 +251,17 @@ def test(dirname):
         .numpy()
         .transpose(),
         cmap="viridis",
-        aspect="equal",
+        vmin=-u_max,
+        vmax=u_max,
+        aspect=solver.hy / solver.hx,
         interpolation="none",
     )
     axs[1, 3].imshow(
         u[..., display_timestep // 2 + 1].transpose(),
         cmap="viridis",
-        aspect="equal",
+        vmin=-u_max,
+        vmax=u_max,
+        aspect=solver.hy / solver.hx,
         interpolation="none",
     )
     axs[2, 0].imshow(
@@ -241,7 +271,9 @@ def test(dirname):
         .numpy()
         .transpose(),
         cmap="viridis",
-        aspect="equal",
+        vmin=-u_max,
+        vmax=u_max,
+        aspect=solver.hy / solver.hx,
         interpolation="none",
     )
     axs[2, 1].imshow(
@@ -251,7 +283,9 @@ def test(dirname):
         .numpy()
         .transpose(),
         cmap="viridis",
-        aspect="equal",
+        vmin=-u_max,
+        vmax=u_max,
+        aspect=solver.hy / solver.hx,
         interpolation="none",
     )
     axs[2, 2].imshow(
@@ -261,13 +295,17 @@ def test(dirname):
         .numpy()
         .transpose(),
         cmap="viridis",
-        aspect="equal",
+        vmin=-u_max,
+        vmax=u_max,
+        aspect=solver.hy / solver.hx,
         interpolation="none",
     )
     axs[2, 3].imshow(
         u[..., display_timestep + 1].transpose(),
         cmap="viridis",
-        aspect="equal",
+        vmin=-u_max,
+        vmax=u_max,
+        aspect=solver.hy / solver.hx,
         interpolation="none",
     )
 
