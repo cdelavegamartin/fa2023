@@ -8,7 +8,7 @@ hydra:
       train.epochs: 50
       train.batch_size: 10
       train.num_variations: 10
-      num_steps_train: 4
+      train.num_steps_train: 4
       train.random_seed: 0,1
 
   launcher:
