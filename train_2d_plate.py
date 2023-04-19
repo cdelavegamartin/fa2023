@@ -48,7 +48,7 @@ def test(dirname):
     display_timestep = num_example_timesteps - 1
 
     dur = (num_example_timesteps + 2) / fs
-    print(f"Simulation duration: {dur}")
+    # print(f"Simulation duration: {dur}")
     solver = LinearPlateSolver(
         SR=fs,
         TF=dur,
@@ -90,7 +90,7 @@ def test(dirname):
         )
     )
     # Instantiate the models
-    print(f"Instantiate GRU model")
+    # print(f"Instantiate GRU model")
     model_gru = torch.nn.DataParallel(
         FNO_GRU_2d(
             in_channels=cfg.solver.num_state_variables,
@@ -100,7 +100,7 @@ def test(dirname):
             width=cfg.nnarch.width,
         )
     ).to(device)
-    print(f"Instantiate RNN model")
+    # print(f"Instantiate RNN model")
     model_rnn = torch.nn.DataParallel(
         FNO_RNN_2d(
             in_channels=cfg.solver.num_state_variables,
@@ -111,7 +111,7 @@ def test(dirname):
             width=cfg.nnarch.width,
         )
     ).to(device)
-    print(f"Instantiate Ref model")
+    # print(f"Instantiate Ref model")
     model_ref = torch.nn.DataParallel(
         FNO_Markov_2d(
             in_channels=cfg.solver.num_state_variables,
@@ -124,7 +124,18 @@ def test(dirname):
     ).to(device)
 
     # Load the models
+    # print(f"Load GRU model")
+    model_gru.load_state_dict(
+        torch.load(os.path.join(output_dir, "model", "model_gru.pth"))
+    )
     # print(f"Load RNN model")
+    model_rnn.load_state_dict(
+        torch.load(os.path.join(output_dir, "model", "model_rnn.pth"))
+    )
+    # print(f"Load Ref model")
+    model_ref.load_state_dict(
+        torch.load(os.path.join(output_dir, "model", "model_ref.pth"))
+    )
     # Print the shape of model input and its normalization multiplier
     # print(f"model_input.shape before normalization: {model_input.shape}")
     # print(f"normalization_multiplier.shape: {normalization_multiplier.shape}")
@@ -420,7 +431,7 @@ def train(cfg: DictConfig):
         ).unsqueeze(0)
 
     normalization_multiplier = 1 / torch.std(training_output, dim=(0, 1, 2, 3))
-    print(f"normalization multiplier dimensions: {normalization_multiplier.shape}")
+    # print(f"normalization multiplier dimensions: {normalization_multiplier.shape}")
     training_input *= normalization_multiplier
     training_output *= normalization_multiplier
 
@@ -432,7 +443,7 @@ def train(cfg: DictConfig):
     training_output = training_output[:-num_validation, ...]
 
     # Instantiate the models
-    print(f"Instantiate GRU model")
+    # print(f"Instantiate GRU model")
     model_gru = torch.nn.DataParallel(
         FNO_GRU_2d(
             in_channels=cfg.solver.num_state_variables,
@@ -442,7 +453,7 @@ def train(cfg: DictConfig):
             width=cfg.nnarch.width,
         )
     ).to(device)
-    print(f"Instantiate RNN model")
+    # print(f"Instantiate RNN model")
     model_rnn = torch.nn.DataParallel(
         FNO_RNN_2d(
             in_channels=cfg.solver.num_state_variables,
@@ -453,7 +464,7 @@ def train(cfg: DictConfig):
             width=cfg.nnarch.width,
         )
     ).to(device)
-    print(f"Instantiate Ref model")
+    # print(f"Instantiate Ref model")
     model_ref = torch.nn.DataParallel(
         FNO_Markov_2d(
             in_channels=cfg.solver.num_state_variables,
@@ -532,7 +543,9 @@ def train(cfg: DictConfig):
     output_dir = (hydra.core.hydra_config.HydraConfig.get())["runtime"]["output_dir"]
     print("\n")
     print(output_dir)
+    model_dir = os.path.join(output_dir, "model")
     if not os.path.exists(model_dir):
+        os.makedirs(model_dir)
     plt.plot(loss_history)
     plt.savefig(output_dir + "/loss_history.pdf")
 
@@ -552,6 +565,10 @@ def train(cfg: DictConfig):
     del params
     torch.cuda.empty_cache()
     #######################################################################################################################
+    val_dir = os.path.join(output_dir, "validation")
+    if not os.path.exists(val_dir):
+        os.makedirs(val_dir)
+
     validation_input = validation_input.to(device)
     validation_output = validation_output.to(device)
 
@@ -562,7 +579,9 @@ def train(cfg: DictConfig):
         .cpu()
         .numpy()
     )
+    np.save(val_dir + "/val_gru_out.npy", val_gru_out.detach().cpu().numpy())
     del val_gru_out
+
     val_rnn_out = model_rnn(validation_input[:, 0, ...], validation_output.shape[1])
     val_rnn_mse = (
         torch.nn.functional.mse_loss(val_rnn_out, validation_output)
@@ -570,7 +589,9 @@ def train(cfg: DictConfig):
         .cpu()
         .numpy()
     )
+    np.save(val_dir + "/val_rnn_out.npy", val_rnn_out.detach().cpu().numpy())
     del val_rnn_out
+
     val_ref_out = model_ref(validation_input[:, 0, ...], validation_output.shape[1])
     val_ref_mse = (
         torch.nn.functional.mse_loss(val_ref_out, validation_output)
@@ -578,9 +599,20 @@ def train(cfg: DictConfig):
         .cpu()
         .numpy()
     )
+    np.save(val_dir + "/val_ref_out.npy", val_ref_out.detach().cpu().numpy())
     del val_ref_out
 
+    # Save validation results
+    np.save(val_dir + "/validation_input.npy", validation_input.detach().cpu().numpy())
+    np.save(
+        val_dir + "/validation_output.npy", validation_output.detach().cpu().numpy()
+    )
+
     np.save(val_dir + "/val_gru_mse.npy", val_gru_mse)
+    np.save(val_dir + "/val_rnn_mse.npy", val_rnn_mse)
+    np.save(val_dir + "/val_ref_mse.npy", val_ref_mse)
+
+    with open(val_dir + "/validation.txt", "w") as f:
         f.write(
             f"GRU validation MSE:{val_gru_mse:.8f} || RNN validation MSE:{val_rnn_mse:.8f} || Ref validation MSE:{val_ref_mse:.8f}"
         )
