@@ -159,12 +159,13 @@ class LinearPlateSolver:
             ) / (2 * self.kappa**2)
         return eta
 
-    def create_pluck(self, ctr, wid, u0_max, v0_max):
+    def create_pluck(self, ctr, wid, u0_max=1.0, v0_max=0.0):
         # create raised cosine
         # calculate disnces from center
 
         dist = np.sqrt(
-            (self.X - ctr[0]) ** 2 + (self.Y - ctr[1] * self.aspect_ratio) ** 2
+            (self.X.transpose() - ctr[0]) ** 2
+            + (self.Y.transpose() - ctr[1] * self.aspect_ratio) ** 2
         )
 
         ind = np.sign(np.maximum((-dist + wid / 2.0), 0))
@@ -177,16 +178,41 @@ class LinearPlateSolver:
             rc[:, 0] = 0
             rc[:, -1] = 0
 
-        self.u0 = u0_max * rc.reshape(
-            -1,
-            order="F",
-        )
-        self.v0 = v0_max * rc.reshape(
-            -1,
-            order="F",
-        )
+        self.u0 = u0_max * rc
+        self.v0 = v0_max * rc
 
-        w0 = np.concatenate((self.u0, self.v0))
+        w0 = np.concatenate(
+            (
+                self.u0.reshape(-1, 1),
+                self.v0.reshape(-1, 1),
+            )
+        )
+        w0 = np.squeeze(w0, axis=-1)
+        return w0
+
+    def create_random_initial(self, u0max=1.0, v0max=0.0):
+        # create raised cosine
+        # calculate disnces from center
+
+        rand_init = 2.0 * np.random.rand(self.Nx, self.Ny) - 1.0
+
+        # make sure the boundary conditions are met in the initial conditions
+        if self.bc == "clamped" or self.bc == "simply-supported":
+            rand_init[0, :] = 0
+            rand_init[-1, :] = 0
+            rand_init[:, 0] = 0
+            rand_init[:, -1] = 0
+
+        self.u0 = u0_max * rand_init
+        self.v0 = v0_max * rand_init
+
+        w0 = np.concatenate(
+            (
+                self.u0.reshape(-1, 1),
+                self.v0.reshape(-1, 1),
+            )
+        )
+        w0 = np.squeeze(w0, axis=-1)
         return w0
 
     def linplate(self, t1, wb):
@@ -217,22 +243,22 @@ class LinearPlateSolver:
 
         t1 = sol.t
         wb1 = sol.y
+        self.wb1 = wb1
+        self.t1 = t1
         ss = self.ss
-        u = wb1[:ss]
-        v = wb1[ss : 2 * ss]
+        u = wb1[:ss, :]
+        v = wb1[ss : 2 * ss, :]
 
         u = u.reshape(
-            self.Ny,
             self.Nx,
+            self.Ny,
             self.numT,
-            order="F",
-        ).transpose(1, 0, 2)
+        )
         v = v.reshape(
-            self.Ny,
             self.Nx,
+            self.Ny,
             self.numT,
-            order="F",
-        ).transpose(1, 0, 2)
+        )
 
         # Convert to float32
         u = u.astype(np.float32)
@@ -246,15 +272,14 @@ if __name__ == "__main__":
     import matplotlib.pyplot as plt
     import time
 
-    # define parameters
-
-    ctr = (0.45, 0.5)
-    wid = 0.1
-    u0_max = 1
+    # define parameters for initial conditions
+    ctr = (0.3, 0.7)
+    wid = 0.2
+    u0_max = 10
     v0_max = 0
 
-    t60 = ({"f": 100, "T60": 5}, {"f": 2000, "T60": 3})
-    # t60 = None
+    # t60 = ({"f": 100, "T60": 5}, {"f": 2000, "T60": 3})
+    t60 = None
 
     # time the solver
     start = time.time()
@@ -262,18 +287,19 @@ if __name__ == "__main__":
     # create solver
     solver = LinearPlateSolver(
         SR=48000,
-        TF=0.0002,
+        TF=0.01,
         gamma=1.0,
         kappa=1.0,
         t60=t60,
-        aspect_ratio=0.95,
-        Nx=40,
+        aspect_ratio=1.1,
+        Nx=80,
     )
     # print sig0 and sig1
     print(solver.sig0, solver.sig1)
 
     # create initial conditions
     wb0 = solver.create_pluck(ctr, wid, u0_max, v0_max)
+    # wb0 = solver.create_random_initial(u0_max, v0_max)
     # solve
     u, v, t1 = solver.solve(wb0)
 
@@ -282,6 +308,40 @@ if __name__ == "__main__":
 
     # Assert that the t1 array is the same as the t_eval array
     assert np.allclose(t1, solver.t_eval)
+    # Print first and last time values, labelled in a f-string
+    print(f"t1[0] = {t1[0]:.3f}, t1[-1] = {t1[-1]:.3f}")
+
+    # Print shape of X, Y, u, v
+    print(u.shape)
+    print(v.shape)
+    print(solver.X.shape)
+    print(solver.Y.shape)
+    # # Assert that the u and v arrays are the same shape as the X and Y arrays
+    # assert u.shape == solver.X.shape
+    # assert u.shape == solver.Y.shape
+    # assert v.shape == solver.X.shape
+    # assert v.shape == solver.Y.shape
+
+    # Print grid spacing hx, hy and total side lengths Lx, Ly
+    print(f"hx = {solver.hx:.3f}, hy = {solver.hy:.3f}")
+    print(f"Lx = {(solver.Nx-1)*solver.hx:.3f}, Ly = {(solver.Ny-1)*solver.hy:.3f}")
+
+    assert np.allclose(u[..., 0], solver.u0)
+    assert np.allclose(v[..., 0], solver.v0)
+    # Asserts to check the unravelling and rearranging of the wb1 array
+    xi = np.linspace(0, solver.Nx - 1, solver.Nx, dtype=int)
+    yi = np.linspace(0, solver.Ny - 1, solver.Ny, dtype=int)
+
+    def assert_correct_rearranging(xi, yi, solver):
+        for i in range(len(xi)):
+            for j in range(len(yi)):
+                wi = solver.Ny * xi[i] + yi[j]
+                # print("Coords: ", f"x={xi[i]}", f"y={yi[j]}", f"w={wi}")
+                assert np.allclose(u[xi[i], yi[j], :], solver.wb1[wi, :])
+                assert np.allclose(v[xi[i], yi[j], :], solver.wb1[solver.ss + wi, :])
+        return
+
+    assert_correct_rearranging(xi, yi, solver)
 
     # Print the shape of X, Y from the solver
     print(solver.X.shape)
@@ -293,33 +353,60 @@ if __name__ == "__main__":
     # get maximum displacement
     u_max = np.max(np.abs(u))
     print("u_max = ", u_max)
-    # plot
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
+
+    def countnonzero(arr):
+        return arr.size - np.count_nonzero(arr)
+
+    # Print number of nonzero elements in u0 and u[..., 0]
+    print("u0 nonzero = ", countnonzero(solver.u0))
+    print("u[..., 0] nonzero = ", countnonzero(u[..., 0]))
+
+    # fig_width = 237 / 72.27  # Latex columnwidth expressed in inches
+    fig_width = 20  # Latex columnwidth expressed in inches
+    figsize = (fig_width, fig_width * 0.75)
+    fig = plt.figure(figsize=figsize)
+    gs = fig.add_gridspec(2, 3, hspace=0.0, wspace=0.05)
+    axs = gs.subplots(sharex="row", sharey=True)
 
     print(u.shape)
-    ax.imshow(
+    axs[0, 0].imshow(
+        solver.u0.transpose(),
+        vmin=-u_max,
+        vmax=u_max,
+        aspect=solver.hy / solver.hx,
+        cmap="viridis",
+    )
+
+    # for (j, i), label in np.ndenumerate(solver.u0.transpose()):
+    #     axs[0, 0].text(i, j, f"{label:.3f}", ha="center", va="center")
+
+    axs[0, 1].imshow(
         u[..., 0].transpose(),
+        vmin=-u_max,
+        vmax=u_max,
+        aspect=solver.hy / solver.hx,
         cmap="viridis",
     )
-    plt.show()
 
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
+    # for (j, i), label in np.ndenumerate(u[..., 0].transpose()):
+    #     axs[0, 1].text(i, j, f"{label:.3f}", ha="center", va="center")
 
-    ax.imshow(
+    axs[0, 2].imshow(
         u[..., -1].transpose(),
+        vmin=-u_max,
+        vmax=u_max,
+        aspect=solver.hy / solver.hx,
         cmap="viridis",
     )
-    plt.show()
-    # Plot results in 3D
 
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection="3d")
-    ax.plot_surface(
-        solver.X.transpose(),
-        solver.Y.transpose(),
-        u[..., -1],
+    # for (j, i), label in np.ndenumerate(u[..., -1].transpose()):
+    #     axs[0, 2].text(i, j, f"{label:.3f}", ha="center", va="center")
+
+    axs[1, 0].imshow(
+        u[..., u.shape[-1] // 2].transpose(),
+        vmin=-u_max,
+        vmax=u_max,
+        aspect=solver.hy / solver.hx,
         cmap="viridis",
     )
     plt.show()
