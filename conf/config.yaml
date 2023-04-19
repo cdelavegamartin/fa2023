@@ -18,10 +18,10 @@ domain:
 
 train:
   device: cuda
-  epochs: 5
-  batch_size: 10
+  epochs: 5000
+  batch_size: 400
   random_seed: 0
-  num_variations: 10
+  num_variations: 1024
   num_steps_train: 4
   val_split: 0.1
   ic: pluck
