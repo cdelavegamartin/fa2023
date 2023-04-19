@@ -1,12 +1,15 @@
 # @package _global_
 hydra:
   sweep:
-    dir: output/pdeparamsweep/gamma_${solver.gamma}-kappa_${solver.kappa}/
-    subdir: ic_${train.ic}/seed_${train.random_seed}
+    dir: output/pdeparamsweep/gamma_${solver.gamma}-kappa_${solver.kappa}/ic_${train.ic}/
+    subdir: seed_${train.random_seed}
   sweeper:
     params:
-      train.ic: mix, pluck, random
-      train.random_seed: 0
+      train.epochs: 50
+      train.batch_size: 10
+      train.num_variations: 10
+      num_steps_train: 4
+      train.random_seed: 0,1
 
   launcher:
     n_jobs: 1
