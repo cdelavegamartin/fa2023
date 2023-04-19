@@ -124,12 +124,7 @@ def test(dirname):
     ).to(device)
 
     # Load the models
-    print(f"Load GRU model")
-    model_gru.load_state_dict(torch.load(os.path.join(output_dir, "model_gru.pth")))
-    print(f"Load RNN model")
-    model_rnn.load_state_dict(torch.load(os.path.join(output_dir, "model_rnn.pth")))
-    print(f"Load Ref model")
-    model_ref.load_state_dict(torch.load(os.path.join(output_dir, "model_ref.pth")))
+    # print(f"Load RNN model")
     # Print the shape of model input and its normalization multiplier
     # print(f"model_input.shape before normalization: {model_input.shape}")
     # print(f"normalization_multiplier.shape: {normalization_multiplier.shape}")
@@ -537,19 +532,18 @@ def train(cfg: DictConfig):
     output_dir = (hydra.core.hydra_config.HydraConfig.get())["runtime"]["output_dir"]
     print("\n")
     print(output_dir)
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
+    if not os.path.exists(model_dir):
     plt.plot(loss_history)
     plt.savefig(output_dir + "/loss_history.pdf")
 
     # path = output_dir + "/model_gru.pt"
-    torch.save(model_gru.state_dict(), os.path.join(output_dir, "model_gru.pth"))
+    torch.save(model_gru.state_dict(), os.path.join(model_dir, "model_gru.pth"))
     # path = output_dir + "/model_rnn.pt"
-    torch.save(model_rnn.state_dict(), os.path.join(output_dir, "model_rnn.pth"))
+    torch.save(model_rnn.state_dict(), os.path.join(model_dir, "model_rnn.pth"))
     # path = output_dir + "/model_ref.pt"
-    torch.save(model_ref.state_dict(), os.path.join(output_dir, "model_ref.pth"))
+    torch.save(model_ref.state_dict(), os.path.join(model_dir, "model_ref.pth"))
     # path = output_dir + "/norms.pt"
-    torch.save(normalization_multiplier, os.path.join(output_dir, "norms.pt"))
+    torch.save(normalization_multiplier, os.path.join(model_dir, "norms.pt"))
 
     del input
     del output
@@ -586,7 +580,7 @@ def train(cfg: DictConfig):
     )
     del val_ref_out
 
-    with open(output_dir + "/validation.txt", "w") as f:
+    np.save(val_dir + "/val_gru_mse.npy", val_gru_mse)
         f.write(
             f"GRU validation MSE:{val_gru_mse:.8f} || RNN validation MSE:{val_rnn_mse:.8f} || Ref validation MSE:{val_ref_mse:.8f}"
         )
