@@ -1,0 +1,12 @@
+# @package _global_
+hydra:
+  sweep:
+    dir: output/pdeparamsweep/gamma_${solver.gamma}-kappa_${solver.kappa}/
+    subdir: ic_${train.ic}/seed_${train.random_seed}
+  sweeper:
+    params:
+      train.ic: mix, pluck, random
+      train.random_seed: 0
+
+  launcher:
+    n_jobs: 1
