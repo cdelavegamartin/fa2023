@@ -5,7 +5,6 @@ hydra:
     subdir: seed_${train.random_seed}
   sweeper:
     params:
-      
       train.random_seed: 0,1,2
 
   launcher:

@@ -22,7 +22,7 @@ train:
   batch_size: 400
   random_seed: 0
   num_variations: 1024
-  num_steps_train: 4
+  num_steps_train: 40
   val_split: 0.1
   ic: pluck
   optimizer:
