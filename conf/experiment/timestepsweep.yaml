@@ -1,0 +1,11 @@
+# @package _global_
+hydra:
+  sweep:
+    dir: output/timestepsweep/gamma_${solver.gamma}-kappa_${solver.kappa}/sr_${domain.sampling_rate}/
+    subdir: seed_${train.random_seed}
+  sweeper:
+    params:
+      train.random_seed: 0,1,2
+
+  launcher:
+    n_jobs: 1
