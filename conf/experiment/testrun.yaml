@@ -1,0 +1,15 @@
+# @package _global_
+hydra:
+  sweep:
+    dir: output/testrun/${now:%Y-%m-%d_%H-%M-%S}
+    subdir: seed_${train.random_seed}
+  sweeper:
+    params:
+      train.epochs: 50
+      train.batch_size: 10
+      train.num_variations: 10
+      train.num_steps_train: 4
+      train.random_seed: 0,1
+
+  launcher:
+    n_jobs: 2
