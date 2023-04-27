@@ -12,24 +12,7 @@ from platefno.nn.fno_gru import FNO_GRU_2d
 from platefno.nn.fno_ref import FNO_Markov_2d
 import matplotlib.pyplot as plt
 
-from platefno.util.conf import get_config
-
-
-# function to convert from the T60 format in the config to the one required by the solver
-def get_t60(cfg):
-    # Set T60 depending on the damping configuration
-    if cfg.solver.damping.name == "nodamping":
-        t60 = None
-    elif cfg.solver.damping.name == "constant":
-        t60 = cfg.solver.damping.T60
-    elif cfg.solver.damping.name == "freqdependent":
-        t60 = (
-            {"f": cfg.solver.damping.f1, "T60": cfg.solver.damping.T60f1},
-            {"f": cfg.solver.damping.f2, "T60": cfg.solver.damping.T60f2},
-        )
-    else:
-        raise ValueError("Invalid damping configuration")
-    return t60
+from platefno.util.conf import get_config, get_t60
 
 
 def test(dirname):
