@@ -3,7 +3,7 @@ from platefno.util.conf import get_config
 import matplotlib.pyplot as plt
 
 
-def plot_mse_per_timestep(mse_per_timestep, dir_name):
+def plot_mse_per_timestep(mse_per_timestep, dir_name, fname="mse_per_step.pdf"):
     """Plot the MSE per timestep for the three models. Assume we use the validation set from the run itself"""
     # Unpack the MSE per timestep
     val_gru_mse_per_step, val_rnn_mse_per_step, val_ref_mse_per_step = mse_per_timestep
@@ -58,7 +58,7 @@ def plot_mse_per_timestep(mse_per_timestep, dir_name):
     axs[1, 2].set(xlabel="Time step")
 
     fig.savefig(
-        os.path.join(output_dir, "validation", "mse_per_step.pdf"),
+        os.path.join(output_dir, "validation", fname),
         bbox_inches="tight",
     )
     plt.close(fig)
