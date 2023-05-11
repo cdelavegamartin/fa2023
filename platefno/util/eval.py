@@ -38,6 +38,9 @@ def get_val_data_path(dir_name, ic_name="pluck", seed=0):
     return None
 
 
+def read_feather(dir_name, filename="crossval.feather"):
+    df = pd.read_feather(os.path.join(dir_name, filename))
+    return df
 
 
 def load_models_from_dir(dir_name):
