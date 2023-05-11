@@ -231,6 +231,38 @@ def calculate_mse_crossval(dir_name, ic_eval=["pluck", "random"], num_seeds=3):
             validation_input, validation_output = load_data(val_data_dir)
             validation_input = validation_input.to(device)
             validation_output = validation_output.to(device)
+
+            ###############################################
+            # The following is a hack to remove a broken run from the dataset when evaluating the models
+            # The specific run was identified with the plot_broken.py script
+            val_model_broken = pathlib.Path(
+                "/home/carlos/projects/platefno/output/pdeparamsweep-full/gamma_1.0-kappa_1.0/ic_pluck/seed_2"
+            )
+            val_data_broken = pathlib.Path(
+                "/home/carlos/projects/platefno/output/pdeparamsweep-full/gamma_1.0-kappa_1.0/ic_pluck/seed_1"
+            )
+            broken_ic = 85
+            if (
+                pathlib.Path(val_data_dir) == val_data_broken
+                and pathlib.Path(dir_name) == val_model_broken
+            ):
+                print("PING")
+                # Remove the broken run from the dataset
+                validation_input = torch.cat(
+                    [
+                        validation_input[:broken_ic, ...],
+                        validation_input[broken_ic + 1 :, ...],
+                    ]
+                )
+                validation_output = torch.cat(
+                    [
+                        validation_output[:broken_ic, ...],
+                        validation_output[broken_ic + 1 :, ...],
+                    ]
+                )
+            ###############################################
+
+            # Calculate MSE for each state variable
             val_gru_mse, val_rnn_mse, val_ref_mse = calculate_mse(
                 (model_gru, model_rnn, model_ref),
                 validation_input,
