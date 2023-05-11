@@ -34,9 +34,10 @@ def get_val_data_path(dir_name, ic_name="pluck", seed=0):
                 .joinpath(*run_dir_parts[index + 1 : -1])
                 .joinpath(f"seed_{seed}")
             )
-            break
-    val_data_path = None
-    return val_data_path
+            return val_data_path
+    return None
+
+
 
 
 def load_models_from_dir(dir_name):
