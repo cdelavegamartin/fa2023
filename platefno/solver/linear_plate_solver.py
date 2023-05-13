@@ -268,6 +268,65 @@ class LinearPlateSolver:
         return u, v, t1
 
 
+# function to create dataset
+def create_dataset(cfg, solver, num_variations, u0_max=1.0, v0_max=0.0):
+    # Last dimension is for the 2 channels (displacement, velocity)
+    input = np.zeros(
+        (num_variations, 1, solver.Nx, solver.Ny, cfg.solver.num_state_variables),
+        dtype=np.float32,
+    )
+    output = np.zeros(
+        (
+            num_variations,
+            solver.numT - 1,
+            solver.Nx,
+            solver.Ny,
+            cfg.solver.num_state_variables,
+        ),
+        dtype=np.float32,
+    )
+    for i in range(num_variations):
+        if cfg.train.ic == "pluck":
+            ctr = (
+                0.6 * np.random.rand(2) + 0.2
+            )  # Center of the pluck, between 0.2 and 0.8, relative to the plate side lengths
+            wid = (
+                0.1 + np.random.rand(1) * 0.1
+            )  # Width of the pluck, between 0.1 and 0.2
+
+            w0 = solver.create_pluck(ctr, wid, u0_max, v0_max)
+        elif cfg.train.ic == "random":
+            w0 = solver.create_random_initial(u0_max=u0_max, v0_max=v0_max)
+        elif cfg.train.ic == "mix":
+            if i % 2 == 0:
+                ctr = (
+                    0.6 * np.random.rand(2) + 0.2
+                )  # Center of the pluck, between 0.2 and 0.8, relative to the plate side lengths
+                wid = (
+                    0.1 + np.random.rand(1) * 0.1
+                )  # Width of the pluck, between 0.1 and 0.2
+
+                w0 = solver.create_pluck(ctr, wid, u0_max, v0_max)
+            else:
+                w0 = solver.create_random_initial(u0_max=u0_max, v0_max=v0_max)
+        else:
+            raise ValueError("Invalid type of initial condition")
+
+        u, v, _ = solver.solve(w0)
+        input[i, :, :, :, :] = np.expand_dims(
+            np.stack([u[:, :, 0], v[:, :, 0]], axis=-1), axis=0
+        )
+        output[i, :, :, :, :] = np.expand_dims(
+            np.stack(
+                [u[:, :, 1:].transpose(2, 0, 1), v[:, :, 1:].transpose(2, 0, 1)],
+                axis=-1,
+            ),
+            axis=0,
+        )
+
+    return input, output
+
+
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
     import time
