@@ -43,6 +43,11 @@ def read_feather(dir_name, filename="crossval.feather"):
     return df
 
 
+def get_norms(dir_name):
+    norms = torch.load(os.path.join(dir_name, "model", "norms.pt"))
+    return norms
+
+
 def load_models_from_dir(dir_name):
     cfg = get_config(dir_name)
     cfg_hydra = get_config(dir_name, config_name="hydra")
@@ -217,6 +222,7 @@ def calculate_mse_crossval(dir_name, ic_eval=["pluck", "random"], num_seeds=3):
     cfg = get_config(dir_name)
     output_dir = dir_name
     model_gru, model_rnn, model_ref = load_models_from_dir(dir_name)
+    normalization_multiplier_model = get_norms(dir_name)
     # Set torch device if posible if not cpu
     if torch.cuda.is_available() and cfg.train.device == "cuda":
         device = torch.device(cfg.train.device)
@@ -232,6 +238,10 @@ def calculate_mse_crossval(dir_name, ic_eval=["pluck", "random"], num_seeds=3):
                 continue
             if not os.path.exists(val_data_dir):
                 continue
+
+            # Get val_data_dir normalizations
+            normalization_multiplier_data = get_norms(val_data_dir)
+
             validation_input, validation_output = load_data(val_data_dir)
             validation_input = validation_input.to(device)
             validation_output = validation_output.to(device)
