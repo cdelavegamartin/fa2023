@@ -332,9 +332,9 @@ if __name__ == "__main__":
     import time
 
     # define parameters for initial conditions
-    ctr = (0.3, 0.7)
-    wid = 0.2
-    u0_max = 10
+    ctr = (0.45, 0.5)
+    wid = 0.1
+    u0_max = 1.0
     v0_max = 0
 
     # t60 = ({"f": 100, "T60": 5}, {"f": 2000, "T60": 3})
@@ -346,12 +346,12 @@ if __name__ == "__main__":
     # create solver
     solver = LinearPlateSolver(
         SR=48000,
-        TF=0.01,
-        gamma=1.0,
-        kappa=1.0,
+        TF=0.008,
+        gamma=100.0,
+        kappa=0.0,
         t60=t60,
-        aspect_ratio=1.1,
-        Nx=80,
+        aspect_ratio=0.95,
+        Nx=60,
     )
     # print sig0 and sig1
     print(solver.sig0, solver.sig1)
@@ -463,6 +463,13 @@ if __name__ == "__main__":
 
     axs[1, 0].imshow(
         u[..., u.shape[-1] // 2].transpose(),
+        vmin=-u_max,
+        vmax=u_max,
+        aspect=solver.hy / solver.hx,
+        cmap="viridis",
+    )
+    axs[1, 1].imshow(
+        u[..., 15].transpose(),
         vmin=-u_max,
         vmax=u_max,
         aspect=solver.hy / solver.hx,
