@@ -435,7 +435,8 @@ if __name__ == "__main__":
     
     list_cases_dirs = [f.path for f in os.scandir(dir_name) if f.is_dir()]
     for case_dir in list_cases_dirs:
-        plot_combined_extrapolation(os.path.join(case_dir, "ic_pluck"), steps=2000, num_variations=30, seed=5, highlight_run=(0, 2),linestyles = ["solid", "dashed", "dotted"])
+        for highlight_run in [2,4,8]:
+            plot_combined_extrapolation(os.path.join(case_dir, "ic_pluck"), steps=2000, num_variations=30, seed=5, highlight_run=(0, highlight_run),linestyles = ["solid", "dashed", "dotted"])
 
     timer_end = time.time()
     print(f"Time elapsed: {timer_end - timer_start}")
