@@ -218,6 +218,41 @@ def calculate_mse(models, validation_input, validation_output):
     return (val_gru_mse, val_rnn_mse, val_ref_mse)
 
 
+# Function to get the failure rate of the model
+def get_divergence_rate(mse_per_timestep):
+    """Calculate the divergence rate of the model, defined as the fraction of ICs that diverge to infinity"""
+    debug = True
+    # Unpack the MSE per timestep
+    val_gru_mse_per_step, val_rnn_mse_per_step, val_ref_mse_per_step = mse_per_timestep
+
+    if debug:
+        # Print the maximum MSE for each model
+        print(f"GRU max MSE (u): {np.nanmax(val_gru_mse_per_step[..., 0], axis=1)}")
+        print(f"RNN max MSE (u): {np.nanmax(val_rnn_mse_per_step[..., 0], axis=1)}")
+        print(f"REF max MSE (u): {np.nanmax(val_ref_mse_per_step[..., 0], axis=1)}")
+
+        print(f"GRU max MSE (v): {np.nanmax(val_gru_mse_per_step[..., 1], axis=1)}")
+        print(f"RNN max MSE (v): {np.nanmax(val_rnn_mse_per_step[..., 1], axis=1)}")
+        print(f"REF max MSE (v): {np.nanmax(val_ref_mse_per_step[..., 1], axis=1)}")
+    gru_div_rate = (
+        np.sum(np.nanmax(val_gru_mse_per_step, axis=1) == np.inf)
+        / val_gru_mse_per_step.shape[0]
+        / val_gru_mse_per_step.shape[2]
+    )
+    rnn_div_rate = (
+        np.sum(np.nanmax(val_rnn_mse_per_step, axis=1) == np.inf)
+        / val_rnn_mse_per_step.shape[0]
+        / val_rnn_mse_per_step.shape[2]
+    )
+    ref_div_rate = (
+        np.sum(np.nanmax(val_ref_mse_per_step, axis=1) == np.inf)
+        / val_ref_mse_per_step.shape[0]
+        / val_ref_mse_per_step.shape[2]
+    )
+
+    return (gru_div_rate, rnn_div_rate, ref_div_rate)
+
+
 def calculate_mse_crossval(dir_name, ic_eval=["pluck", "random"], num_seeds=3):
     cfg = get_config(dir_name)
     output_dir = dir_name
@@ -243,8 +278,12 @@ def calculate_mse_crossval(dir_name, ic_eval=["pluck", "random"], num_seeds=3):
             normalization_multiplier_data = get_norms(val_data_dir)
 
             validation_input, validation_output = load_data(val_data_dir)
-            validation_input = validation_input.to(device)
-            validation_output = validation_output.to(device)
+
+            # Normalize the validation data with the normalization from the training data
+            validation_input /= normalization_multiplier_data
+            validation_output /= normalization_multiplier_data
+            validation_input *= normalization_multiplier_model
+            validation_output *= normalization_multiplier_model
 
             ###############################################
             # The following is a hack to remove a broken run from the dataset when evaluating the models
@@ -275,6 +314,10 @@ def calculate_mse_crossval(dir_name, ic_eval=["pluck", "random"], num_seeds=3):
                     ]
                 )
             ###############################################
+
+            # Put the validation data on the device
+            validation_input = validation_input.to(device)
+            validation_output = validation_output.to(device)
 
             # Calculate MSE for each state variable
             val_gru_mse, val_rnn_mse, val_ref_mse = calculate_mse(
@@ -327,4 +370,50 @@ def calculate_mse_crossval(dir_name, ic_eval=["pluck", "random"], num_seeds=3):
         return None
     df = pd.DataFrame.from_dict(results)
     df.to_feather(os.path.join(output_dir, "validation", "crossval.feather"))
+    return df
+
+
+def rename_model(model_name):
+    if model_name == "gru":
+        return "FGRU"
+    elif model_name == "rnn":
+        return "FRNN"
+    elif model_name == "ref":
+        return "REF"
+    else:
+        return model_name
+
+
+def format_mse(x, tol=5.0):
+    if x < tol and not np.isnan(x):
+        return "{:.4f}".format(x)
+    else:
+        return " - "
+
+
+# Function to create new column in the dataframe with the mean of the mse, and std in parenthesis
+def create_mean_std(df):
+    df["mean_std_u"] = (
+        df["mse_u"]["mean"].apply(format_mse).astype("str")
+        + " ("
+        + df["mse_u"]["std"].apply(format_mse).astype("str")
+        + ")"
+    )
+
+    df["mean_std_v"] = (
+        df["mse_v"]["mean"].apply(format_mse).astype("str")
+        + " ("
+        + df["mse_v"]["std"].apply(format_mse).astype("str")
+        + ")"
+    )
+    return df
+
+
+# Function to combine gamma and kappa in one column for display purposes
+def combine_gamma_kappa(df):
+    df["gamma_kappa"] = (
+        df["gamma"].apply(lambda x: "$\gamma={:.1f}$".format(x)).astype("str")
+        + ", "
+        + df["kappa"].apply(lambda x: "$\kappa={:.1f}$".format(x)).astype("str")
+    )
     return df

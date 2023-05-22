@@ -15,6 +15,10 @@ from platefno.util.eval import (
     load_models_from_dir,
     load_data,
     calculate_mse_crossval,
+    rename_model,
+    format_mse,
+    create_mean_std,
+    combine_gamma_kappa,
 )
 from platefno.util.plot import plot_mse_per_timestep
 
@@ -74,52 +78,6 @@ def aggregate_experiment_val_results(exp_dir):
         )
     df.reset_index(drop=True, inplace=True)
     df.to_feather(os.path.join(exp_dir, "crossval_total.feather"))
-    return df
-
-
-def rename_model(model_name):
-    if model_name == "gru":
-        return "FGRU"
-    elif model_name == "rnn":
-        return "FRNN"
-    elif model_name == "ref":
-        return "REF"
-    else:
-        return model_name
-
-
-def format_mse(x, tol=5.0):
-    if x < tol and not np.isnan(x):
-        return "{:.4f}".format(x)
-    else:
-        return " - "
-
-
-# Function to create new column in the dataframe with the mean of the mse, and std in parenthesis
-def create_mean_std(df):
-    df["mean_std_u"] = (
-        df["mse_u"]["mean"].apply(format_mse).astype("str")
-        + " ("
-        + df["mse_u"]["std"].apply(format_mse).astype("str")
-        + ")"
-    )
-
-    df["mean_std_v"] = (
-        df["mse_v"]["mean"].apply(format_mse).astype("str")
-        + " ("
-        + df["mse_v"]["std"].apply(format_mse).astype("str")
-        + ")"
-    )
-    return df
-
-
-# Function to combine gamma and kappa in one column for display purposes
-def combine_gamma_kappa(df):
-    df["gamma_kappa"] = (
-        df["gamma"].apply(lambda x: "$\gamma={:.1f}$".format(x)).astype("str")
-        + ", "
-        + df["kappa"].apply(lambda x: "$\kappa={:.1f}$".format(x)).astype("str")
-    )
     return df
 
 
@@ -298,10 +256,7 @@ if __name__ == "__main__":
     for run_dir in get_run_dirs(dir_name):
         print(run_dir)
         evaluate_run(run_dir)
-    # gammas = [100.0, 1.0]
-    # kappas = [1.0, 0.1]
-    # models = ["gru", "rnn", "ref"]
-    # ic_evals = ["pluck", "random"]
+
     df = aggregate_experiment_val_results(dir_name)
     ic = "pluck"
     create_latex_table_val_results_single_ic(
@@ -309,29 +264,6 @@ if __name__ == "__main__":
         ic=ic,
         file=os.path.join(dir_name, f"val_{ic}.tex"),
     )
-    # for gamma in gammas:
-    #     for kappa in kappas:
-    #         for model in models:
-    #             create_latex_table_val_results(
-    #                 df,
-    #                 gamma=gamma,
-    #                 kappa=kappa,
-    #                 model=model,
-    #                 file=os.path.join(
-    #                     dir_name, f"crossval_{model}_gamma-{gamma}_kappa-{kappa}.tex"
-    #                 ),
-    #             )
-    #         for ic_eval in ic_evals:
-    #             df_filt = create_latex_table_val_results_alt(
-    #                 df,
-    #                 gamma=gamma,
-    #                 kappa=kappa,
-    #                 ic_eval=ic_eval,
-    #                 file=os.path.join(
-    #                     dir_name,
-    #                     f"crossval_eval-{ic_eval}_gamma-{gamma}_kappa-{kappa}.tex",
-    #                 ),
-    #             )
 
     timer_end = time.time()
     print(f"Elapsed time: {timer_end - timer_start} seconds")
