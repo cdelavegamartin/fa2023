@@ -414,26 +414,28 @@ if __name__ == "__main__":
     timer_start = time.time()
     print(len(get_run_dirs(dir_name)))
 
-    # # loop over all the runs in the directory
-    # df_total = pd.DataFrame()
-    # for run_dir in get_run_dirs(dir_name):
-    #     cfg = get_config(run_dir)
-    #     # only evaluate if the run is for plucks
-    #     if cfg.train.ic == "pluck":
-    #         print(run_dir)
-    #         df_run = evaluate_run_extrapolation_divergence(run_dir, steps=2000, num_variations=30, seed=5)
-    #         df_total = pd.concat(
-    #         [df_total,df_run],
-    #         axis=0,
-    #     )
-    # df_total.reset_index(drop=True, inplace=True)
-    # df_total.to_feather(os.path.join(dir_name, "divergence.feather"))
-    # create_latex_table_div_single_ic(df_total, ic="pluck", file="./div_rate.tex")
+    # loop over all the runs in the directory
+    df_total = pd.DataFrame()
+    for run_dir in get_run_dirs(dir_name):
+        cfg = get_config(run_dir)
+        # only evaluate if the run is for plucks
+        if cfg.train.ic == "pluck":
+            print(run_dir)
+            df_run = evaluate_run_extrapolation_divergence(run_dir, steps=2000, num_variations=30, seed=5)
+            df_total = pd.concat(
+            [df_total,df_run],
+            axis=0,
+        )
+    df_total.reset_index(drop=True, inplace=True)
+    df_total.to_feather(os.path.join(dir_name, "divergence.feather"))
+    create_latex_table_div_single_ic(df_total, ic="pluck", file="div_rate.tex")
 
 
-    # Plot the extrapolation results aggregated
-    plot_combined_extrapolation(dir_name, steps=45, num_variations=30, seed=5, highlight_run=(0, 2),linestyles = ["solid", "dashed", "dotted"])
-
+    # Plot the extrapolation results aggregated for each combination of gamma and kappa
+    
+    list_cases_dirs = [f.path for f in os.scandir(dir_name) if f.is_dir()]
+    for case_dir in list_cases_dirs:
+        plot_combined_extrapolation(os.path.join(case_dir, "ic_pluck"), steps=2000, num_variations=30, seed=5, highlight_run=(0, 2),linestyles = ["solid", "dashed", "dotted"])
 
     timer_end = time.time()
     print(f"Time elapsed: {timer_end - timer_start}")
