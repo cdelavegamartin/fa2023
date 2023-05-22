@@ -5,11 +5,15 @@ hydra:
     subdir: seed_${train.random_seed}
   sweeper:
     params:
-      train.epochs: 50
-      train.batch_size: 10
-      train.num_variations: 10
-      train.num_steps_train: 4
-      train.random_seed: 0,1
+      train.epochs: 5000
+      train.batch_size: 400
+      train.num_variations: 1024
+      train.num_steps_train: 40
+      train.ic: pluck
+      train.random_seed: 0,1,2
+      solver.gamma: 1.0, 100.0
+      solver.kappa: 0.1, 1.0
+
 
   launcher:
     n_jobs: 1
