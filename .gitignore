@@ -11,3 +11,9 @@ output/
 hpc/**/*.job
 hpc/**/*.txt
 *.job.*
+
+# Tex files
+*.tex
+
+# Vscode files
+.vscode/
