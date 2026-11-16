@@ -19,9 +19,11 @@ def build_models(cfg, size_x, size_y, device):
         spatial_size_y=size_y,
         width=cfg.nnarch.width,
     )
+    # Configurations saved before the option existed use the original layer.
+    full_spectrum = cfg.nnarch.get("full_spectrum", False)
     models = (
-        FNO_GRU_2d(**common),
-        FNO_RNN_2d(**common, depth=cfg.nnarch.depth),
+        FNO_GRU_2d(**common, full_spectrum=full_spectrum),
+        FNO_RNN_2d(**common, depth=cfg.nnarch.depth, full_spectrum=full_spectrum),
         FNO_Markov_2d(**common, depth=cfg.nnarch.depth),
     )
     return tuple(torch.nn.DataParallel(m).to(device) for m in models)

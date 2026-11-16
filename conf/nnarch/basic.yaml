@@ -3,4 +3,6 @@
 depth: 3
 width: 8
 
-    
+    # Keep the negative-kx block in the FourierConv2d layers of FGRU and FRNN
+# (false reproduces the original, truncated layer)
+full_spectrum: false
