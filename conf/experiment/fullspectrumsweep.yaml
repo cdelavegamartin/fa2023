@@ -1,0 +1,22 @@
+# @package _global_
+# Same sweep as pdeparamsweep, with and without the full-spectrum FourierConv2d
+# (phd-thesis#85). Seed 0 only for now; add 1,2 to train.random_seed for all seeds.
+# Both full_spectrum values of a (gamma, kappa, seed) use the same data.path.
+hydra:
+  sweep:
+    dir: output/fullspectrumsweep/gamma_${solver.gamma}-kappa_${solver.kappa}/ic_${train.ic}/full_spectrum_${nnarch.full_spectrum}
+    subdir: seed_${train.random_seed}
+  sweeper:
+    params:
+      train.epochs: 5000
+      train.batch_size: 400
+      train.num_variations: 1024
+      train.num_steps_train: 40
+      train.ic: pluck
+      train.random_seed: 0
+      solver.gamma: 1.0, 100.0
+      solver.kappa: 0.1, 1.0
+      nnarch.full_spectrum: false, true
+
+  launcher:
+    n_jobs: 1
