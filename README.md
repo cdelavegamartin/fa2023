@@ -5,9 +5,11 @@ Code for the paper Physical Modelling of Stiff Membrane Vibration Using Neural N
 GPU needed, might need to adjust batch size depending on GPU RAM
 
 ### Create the environment
-The project uses [uv](https://docs.astral.sh/uv/):
-```uv sync```
-The PyTorch wheels include CUDA support.
+The project uses [uv](https://docs.astral.sh/uv/); an extra selects the PyTorch backend:
+```uv sync --extra cu126```  CUDA 12.6 PyTorch (NVIDIA driver R525 or newer)
+```uv sync --extra cpu```  CPU-only PyTorch
+
+`uv run` keeps the backend installed by the last `uv sync`.
 
 ### test run
 ```uv run python train_2d_plate.py -m +experiment=testrun solver/damping=freqdependent```
