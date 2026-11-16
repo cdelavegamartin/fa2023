@@ -40,7 +40,7 @@ def train(cfg: DictConfig):
     size_x, size_y = data.shape[2:4]
 
     # Instantiate the models
-    model_gru, model_rnn, model_ref = build_models(cfg, size_x, size_y, device)
+    model_gru, model_rnn, model_ref = build_models(cfg, size_x, size_y, device).values()
 
     # List of all parameters to be optimzed, also for gradient clipping
     params = (

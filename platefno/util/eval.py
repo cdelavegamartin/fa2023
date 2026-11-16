@@ -65,7 +65,9 @@ def load_models_from_dir(dir_name):
     solver = make_solver(cfg)  # gives the grid size of the models
 
     # Instantiate the models
-    model_gru, model_rnn, model_ref = build_models(cfg, solver.Nx, solver.Ny, device)
+    model_gru, model_rnn, model_ref = build_models(
+        cfg, solver.Nx, solver.Ny, device
+    ).values()
 
     # Load the models
     # print(f"Load GRU model")
