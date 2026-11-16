@@ -3,8 +3,8 @@ import torch
 import numpy as np
 import pathlib
 import pandas as pd
-from platefno.util.conf import get_config, get_t60
-from platefno.solver.linear_plate_solver import LinearPlateSolver
+from platefno.util.conf import get_config
+from platefno.data import make_solver
 from platefno.nn.models import build_models
 
 
@@ -52,7 +52,6 @@ def load_models_from_dir(dir_name):
     # get output dir from config
 
     output_dir = dir_name
-    num_steps_train = cfg.train.num_steps_train
 
     # Set torch device if posible if not cpu
     if torch.cuda.is_available() and cfg.train.device == "cuda":
@@ -63,21 +62,8 @@ def load_models_from_dir(dir_name):
     torch.manual_seed(cfg.train.random_seed)  # Set seed for reproducibility
     np.random.seed(cfg.train.random_seed)
 
-    # Solver and domain parameters
-    fs = cfg.domain.sampling_rate
-    t60 = get_t60(cfg)
-    dur = num_steps_train / fs
+    solver = make_solver(cfg)  # gives the grid size of the models
 
-    # print(f"Simulation duration: {dur}")
-    solver = LinearPlateSolver(
-        SR=fs,
-        TF=dur,
-        gamma=cfg.solver.gamma,
-        kappa=cfg.solver.kappa,
-        t60=t60,
-        aspect_ratio=cfg.domain.aspect_ratio,
-        Nx=cfg.domain.nx,
-    )
     # Instantiate the models
     model_gru, model_rnn, model_ref = build_models(cfg, solver.Nx, solver.Ny, device)
 
