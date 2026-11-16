@@ -15,6 +15,13 @@ domain:
   aspect_ratio: 0.95 # ny/nx
   sampling_rate: 48000
 
+# Dataset: one raw .npy array (trajectories, time steps, x, y, channels) made by
+# generate_dataset.py. Training standardises it as (data - mean) / std per channel;
+# mean null means 0 (scale only), std null means the std of the training split.
+data:
+  path: output/datasets/gamma_${solver.gamma}-kappa_${solver.kappa}-damping_${solver.damping.name}/ic_${train.ic}-n_${train.num_variations}-steps_${train.num_steps_train}-seed_${train.random_seed}.npy
+  mean: null
+  std: null
 
 train:
   device: cuda
