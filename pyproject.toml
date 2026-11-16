@@ -1,0 +1,24 @@
+[project]
+name = "platefno"
+version = "0.1.0"
+description = "Physical modelling of stiff membrane vibration using neural networks with spectral convolution layers"
+requires-python = ">=3.10,<3.13"
+dependencies = [
+    "torch>=2.2",
+    "numpy",
+    "scipy>=1.8",  # scipy.sparse.bsr_array
+    "matplotlib",
+    "pandas",
+    "pyarrow",
+    "hydra-core",
+    "hydra-joblib-launcher",
+]
+
+[tool.uv]
+package = false
+
+# CPU-only installs: uv sync --index pytorch-cpu
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
