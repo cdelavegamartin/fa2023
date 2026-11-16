@@ -39,7 +39,13 @@ class FNO_GRU_1d(torch.nn.Module):
 
 class FNO_GRU_2d(torch.nn.Module):
     def __init__(
-        self, in_channels, out_channels, spatial_size_x, spatial_size_y, width
+        self,
+        in_channels,
+        out_channels,
+        spatial_size_x,
+        spatial_size_y,
+        width,
+        full_spectrum=False,
     ):
         super(FNO_GRU_2d, self).__init__()
 
@@ -49,16 +55,17 @@ class FNO_GRU_2d(torch.nn.Module):
 
         self.in_mapping = torch.nn.Linear(in_channels, self.width)
         # print(f"instantiate z_layer")
+        conv_kwargs = dict(full_spectrum=full_spectrum)
         self.z_layer = FourierConv2d(
-            self.width, self.width, spatial_size_x, spatial_size_y
+            self.width, self.width, spatial_size_x, spatial_size_y, **conv_kwargs
         )
         # print(f"instantiate r_layer")
         self.r_layer = FourierConv2d(
-            self.width, self.width, spatial_size_x, spatial_size_y
+            self.width, self.width, spatial_size_x, spatial_size_y, **conv_kwargs
         )
         # print(f"instantiate h_layer")
         self.h_layer = FourierConv2d(
-            self.width, self.width, spatial_size_x, spatial_size_y
+            self.width, self.width, spatial_size_x, spatial_size_y, **conv_kwargs
         )
 
         self.out_mapping = torch.nn.Linear(self.width, out_channels)
