@@ -214,35 +214,16 @@ def train(cfg: DictConfig):
     validation_input = validation_input.to(device)
     validation_output = validation_output.to(device)
 
-    val_gru_out = model_gru(validation_input[:, 0, ...], validation_output.shape[1])
-    val_gru_mse = (
-        torch.nn.functional.mse_loss(val_gru_out, validation_output)
-        .detach()
-        .cpu()
-        .numpy()
-    )
-    np.save(val_dir + "/val_gru_out.npy", val_gru_out.detach().cpu().numpy())
-    del val_gru_out
-
-    val_rnn_out = model_rnn(validation_input[:, 0, ...], validation_output.shape[1])
-    val_rnn_mse = (
-        torch.nn.functional.mse_loss(val_rnn_out, validation_output)
-        .detach()
-        .cpu()
-        .numpy()
-    )
-    np.save(val_dir + "/val_rnn_out.npy", val_rnn_out.detach().cpu().numpy())
-    del val_rnn_out
-
-    val_ref_out = model_ref(validation_input[:, 0, ...], validation_output.shape[1])
-    val_ref_mse = (
-        torch.nn.functional.mse_loss(val_ref_out, validation_output)
-        .detach()
-        .cpu()
-        .numpy()
-    )
-    np.save(val_dir + "/val_ref_out.npy", val_ref_out.detach().cpu().numpy())
-    del val_ref_out
+    val_mse = {}
+    with torch.no_grad():
+        for name, model in zip(("gru", "rnn", "ref"), (model_gru, model_rnn, model_ref)):
+            val_out = model(validation_input[:, 0, ...], validation_output.shape[1])
+            val_mse[name] = (
+                torch.nn.functional.mse_loss(val_out, validation_output).cpu().numpy()
+            )
+            np.save(val_dir + f"/val_{name}_out.npy", val_out.cpu().numpy())
+            del val_out
+    val_gru_mse, val_rnn_mse, val_ref_mse = val_mse.values()
 
     # Save validation results
     np.save(val_dir + "/validation_input.npy", validation_input.detach().cpu().numpy())
