@@ -7,7 +7,7 @@ GPU needed, might need to adjust batch size depending on GPU RAM
 ### Create the environment
 The project uses [uv](https://docs.astral.sh/uv/):
 ```uv sync```
-The default PyTorch wheels include CUDA; for a CPU-only install use ```uv sync --index pytorch-cpu```.
+The PyTorch wheels include CUDA support.
 
 ### test run
 ```uv run python train_2d_plate.py -m +experiment=testrun solver/damping=freqdependent```
