@@ -9,7 +9,7 @@ from numpy import (
     real,
     zeros,
     pi,
-    trapz,
+    trapezoid,
     arange,
     vstack,
     hstack,
@@ -153,7 +153,7 @@ class WaveSolver2D:
             funX = 4 * cos(lamX[mu] * xs) * (rx)
             funY = cos(lamY[mu] * ys) * (ry)
 
-            integ = trapz(xs, funX) * trapz(ys, funY)
+            integ = trapezoid(xs, funX) * trapezoid(ys, funY)
             fe_xy[:, mu] = integ[0]
 
         return fe_xy

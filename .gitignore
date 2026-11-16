@@ -17,3 +17,9 @@ hpc/**/*.txt
 
 # Vscode files
 .vscode/
+# Python environment
+.venv/
+
+# Agent files
+.agents-plan/
+.claude/worktrees/
