@@ -25,6 +25,11 @@ data:
 
 train:
   device: cuda
+  # Models trained by this run, each with its own optimiser and scheduler
+  models: [gru, rnn, ref]
+  # true: clip the concatenated gradients of all the models of the run (as in the
+  # paper); false: clip each model's gradients on its own
+  clip_jointly: false
   epochs: 5000
   batch_size: 400
   random_seed: 0
