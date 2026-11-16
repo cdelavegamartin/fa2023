@@ -47,8 +47,25 @@ class FourierConv1d(torch.nn.Module):
 
 
 class FourierConv2d(torch.nn.Module):
+    """Spectral convolution over the zero-padded (2 size_x, 2 size_y) grid.
+
+    rfft2 halves only the last axis, so its output holds both signs of kx along
+    the first axis: rows [:size_x] (kx >= 0) and [-size_x:] (kx < 0).
+    With full_spectrum=False (the original layer) only the kx >= 0 block has
+    weights, which drops the (kx < 0, ky > 0) / (kx > 0, ky < 0) quadrant pair
+    of the full spectrum.
+    full_spectrum=True adds weights and biases for the kx < 0 block.
+    """
+
     def __init__(
-        self, in_channels, out_channels, size_x, size_y, bias=True, periodic=False
+        self,
+        in_channels,
+        out_channels,
+        size_x,
+        size_y,
+        bias=True,
+        periodic=False,
+        full_spectrum=False,
     ):
         super(FourierConv2d, self).__init__()
 
@@ -87,6 +104,29 @@ class FourierConv2d(torch.nn.Module):
         # print(f"FourierConv2d biases.shape: {self.biases.shape}")
         self.bias = bias
         self.periodic = periodic
+        self.full_spectrum = full_spectrum
+        if full_spectrum:
+            self.weights_neg = torch.nn.Parameter(
+                torch.view_as_real(
+                    (1 / (in_channels * out_channels))
+                    * torch.rand(self.weights.shape[:-1], dtype=torch.cfloat)
+                )
+            )
+            self.biases_neg = torch.nn.Parameter(
+                torch.view_as_real(
+                    (1 / out_channels)
+                    * torch.rand(self.biases.shape[:-1], dtype=torch.cfloat)
+                )
+            )
+
+    def _spectral_blocks(self):
+        """(row slice, weights, biases) for each kx block that the layer keeps."""
+        blocks = [(slice(None, self.size_x), self.weights, self.biases)]
+        if self.full_spectrum:
+            blocks.append(
+                (slice(-self.size_x, None), self.weights_neg, self.biases_neg)
+            )
+        return blocks
 
     def forward(self, x):
         # print(f"FourierConv2d forward pass")
@@ -102,16 +142,14 @@ class FourierConv2d(torch.nn.Module):
         out_ft = torch.zeros_like(x_ft)
         # print(f"FourierConv2d out_ft.shape: {out_ft.shape}")
         # print("Do einsum")
-        out_ft[:, :, : self.size_x, : self.size_y] = torch.einsum(
-            "bixy,ioxy->boxy",
-            x_ft[:, :, : self.size_x, : self.size_y],
-            torch.view_as_complex(self.weights),
-        )
-        if self.bias:
-            # print("Add bias")
-            out_ft[:, :, : self.size_x, : self.size_y] += torch.view_as_complex(
-                self.biases
+        for rows, weights, biases in self._spectral_blocks():
+            out_ft[:, :, rows, : self.size_y] = torch.einsum(
+                "bixy,ioxy->boxy",
+                x_ft[:, :, rows, : self.size_y],
+                torch.view_as_complex(weights),
             )
+            if self.bias:
+                out_ft[:, :, rows, : self.size_y] += torch.view_as_complex(biases)
         # print("Do inverse FFT")
         out = torch.fft.irfft2(out_ft)
         # print(f"FourierConv2d out.shape before periodic: {out.shape}")
