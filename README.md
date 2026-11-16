@@ -44,6 +44,12 @@ The results in the paper use this layer, which remains the default (`nnarch.full
 Set `nnarch.full_spectrum=true` to keep the full spectrum, e.g.
 ```uv run python train_2d_plate.py -m +experiment=testrun solver/damping=freqdependent nnarch.full_spectrum=true```
 
+### Training the models separately
+Each model has its own optimiser and learning-rate schedule, and its own initialisation seed, so it trains the same alone as alongside the others.
+- `train.models` selects the models of a run (default `[gru,rnn,ref]`); e.g. `'train.models=[gru],[rnn],[ref]'` in a multirun gives one job per model, writing to the same run directory.
+- `train.clip_jointly` clips the concatenated gradients of the run's models together, as in the paper (`pdeparamsweep` sets it); the default `false` clips each model on its own.
+  With the log10 loss, the gradient grows as the loss falls, so under joint clipping the model with the lowest loss shrinks the steps of the others.
+
 ### Full-spectrum sweep
 Every (gamma, kappa) of the paper with the original and the full-spectrum layer (seed 0); both use the same dataset.
 ```uv run python generate_dataset.py -m +experiment=fullspectrumsweep solver/damping=freqdependent nnarch.full_spectrum=false hydra.sweep.dir=output/generate_dataset```
