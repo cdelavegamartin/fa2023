@@ -6,11 +6,12 @@ import os
 import time
 import shutil
 
-from platefno.solver.linear_plate_solver import LinearPlateSolver
+from hydra.utils import to_absolute_path
+
+from platefno.data import channel_stats, split, standardize
 from platefno.nn.models import build_models
 import matplotlib.pyplot as plt
 
-from platefno.util.conf import get_config, get_t60
 
 
 @hydra.main(version_base=None, config_path="conf", config_name="config")
@@ -18,105 +19,28 @@ def train(cfg: DictConfig):
     """Train 3 variants of the Fourier Neural Operator (FNO) to solve the 2D plate equation"""
 
     # Training parameters
-    num_steps_train = cfg.train.num_steps_train
-    num_variations = cfg.train.num_variations
-    validation_split = cfg.train.val_split
     epochs = cfg.train.epochs
     batch_size = cfg.train.batch_size
     device = torch.device(cfg.train.device)  # Set torch device
     torch.manual_seed(cfg.train.random_seed)  # Set seed for reproducibility
     np.random.seed(cfg.train.random_seed)
 
-    # Solver and domain parameters
-    fs = cfg.domain.sampling_rate
-    dur = num_steps_train / fs
-    print(f"Simulation duration: {dur}")
-    t60 = get_t60(cfg)
-
-    #######################################################################################################################
-    # The solver is used to generate the training data
-    solver = LinearPlateSolver(
-        SR=fs,
-        TF=dur,
-        gamma=cfg.solver.gamma,
-        kappa=cfg.solver.kappa,
-        t60=t60,
-        aspect_ratio=cfg.domain.aspect_ratio,
-        Nx=cfg.domain.nx,
-    )
-    # Last dimension is for the 2 channels (displacement, velocity)
-    training_input = torch.zeros(
-        (num_variations, 1, solver.Nx, solver.Ny, cfg.solver.num_state_variables)
-    )
-    training_output = torch.zeros(
-        (
-            num_variations,
-            solver.numT - 1,
-            solver.Nx,
-            solver.Ny,
-            cfg.solver.num_state_variables,
-        )
-    )
-
-    # Generate training data
-    # The solver is used to generate the training data
-    # The initial condition is either a pluck or a random displacement,
-    # and the training dataset can be either or a mixture of both
-
-    u0_max = 1.0  # Maximum displacement of the initial condition
-    v0_max = 0.0  # Maximum velocity of the initial condition
-    for i in range(num_variations):
-        if cfg.train.ic == "pluck":
-            ctr = (
-                0.6 * np.random.rand(2) + 0.2
-            )  # Center of the pluck, between 0.2 and 0.8, relative to the plate side lengths
-            wid = (
-                0.1 + np.random.rand(1) * 0.1
-            )  # Width of the pluck, between 0.1 and 0.2
-
-            w0 = solver.create_pluck(ctr, wid, u0_max, v0_max)
-        elif cfg.train.ic == "random":
-            w0 = solver.create_random_initial(u0_max=u0_max, v0_max=v0_max)
-        elif cfg.train.ic == "mix":
-            if i % 2 == 0:
-                ctr = (
-                    0.6 * np.random.rand(2) + 0.2
-                )  # Center of the pluck, between 0.2 and 0.8, relative to the plate side lengths
-                wid = (
-                    0.1 + np.random.rand(1) * 0.1
-                )  # Width of the pluck, between 0.1 and 0.2
-
-                w0 = solver.create_pluck(ctr, wid, u0_max, v0_max)
-            else:
-                w0 = solver.create_random_initial(u0_max=u0_max, v0_max=v0_max)
-        else:
-            raise ValueError("Invalid type of initial condition")
-
-        u, v, _ = solver.solve(w0)
-        training_input[i, :, :, :, :] = torch.tensor(
-            np.stack([u[:, :, 0], v[:, :, 0]], axis=-1)
-        ).unsqueeze(0)
-        training_output[i, :, :, :, :] = torch.tensor(
-            np.stack(
-                [u[:, :, 1:].transpose(2, 0, 1), v[:, :, 1:].transpose(2, 0, 1)],
-                axis=-1,
-            )
-        ).unsqueeze(0)
-
-    normalization_multiplier = 1 / torch.std(training_output, dim=(0, 1, 2, 3))
-    # print(f"normalization multiplier dimensions: {normalization_multiplier.shape}")
-    training_input *= normalization_multiplier
-    training_output *= normalization_multiplier
-
-    # split the generated data into training and validation
-    num_validation = int(np.ceil(validation_split * num_variations))
-    validation_input = training_input[-num_validation:, ...]
-    validation_output = training_output[-num_validation:, ...]
-    training_input = training_input[:-num_validation, ...]
-    training_output = training_output[:-num_validation, ...]
+    # Dataset made by generate_dataset.py: (trajectories, time steps, x, y, channels)
+    data = np.load(to_absolute_path(cfg.data.path), mmap_mode="r")
+    training, validation = split(data, cfg.train.val_split)
+    num_channels = data.shape[-1]
+    mean = list(cfg.data.mean) if cfg.data.mean is not None else [0.0] * num_channels
+    std = list(cfg.data.std) if cfg.data.std is not None else channel_stats(training)[1].tolist()
+    print(f"Standardisation: mean {mean}, std {std}")
+    training, validation = (standardize(d, mean, std) for d in (training, validation))
+    # The first step is the input, the following steps the target
+    training_input, training_output = training[:, :1], training[:, 1:]
+    validation_input, validation_output = validation[:, :1], validation[:, 1:]
+    normalization_multiplier = 1 / torch.tensor(std)  # as used by the evaluation scripts
+    size_x, size_y = data.shape[2:4]
 
     # Instantiate the models
-    model_gru, model_rnn, model_ref = build_models(cfg, solver.Nx, solver.Ny, device)
+    model_gru, model_rnn, model_ref = build_models(cfg, size_x, size_y, device)
 
     # List of all parameters to be optimzed, also for gradient clipping
     params = (
@@ -199,6 +123,10 @@ def train(cfg: DictConfig):
     torch.save(model_ref.state_dict(), os.path.join(model_dir, "model_ref.pth"))
     # path = output_dir + "/norms.pt"
     torch.save(normalization_multiplier, os.path.join(model_dir, "norms.pt"))
+    OmegaConf.save(
+        OmegaConf.create({"path": cfg.data.path, "mean": list(mean), "std": list(std)}),
+        os.path.join(model_dir, "data_stats.yaml"),
+    )
 
     del input
     del output
