@@ -1419,7 +1419,7 @@ requires-dist = [
     { name = "hydra-core" },
     { name = "hydra-joblib-launcher" },
     { name = "matplotlib" },
-    { name = "numpy" },
+    { name = "numpy", specifier = ">=2" },
     { name = "pandas" },
     { name = "pyarrow" },
     { name = "scipy", specifier = ">=1.8" },
