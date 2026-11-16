@@ -83,7 +83,7 @@ class FNO_RNN_1d_block(torch.nn.Module):
         return x_out.permute(0, 2, 3, 1)
 
 class FNO_RNN_2d(torch.nn.Module):
-    def __init__(self, in_channels, out_channels, spatial_size_x, spatial_size_y, width, depth = 4, activation = torch.nn.ReLU()):
+    def __init__(self, in_channels, out_channels, spatial_size_x, spatial_size_y, width, depth = 4, activation = torch.nn.ReLU(), full_spectrum = False):
         super(FNO_RNN_2d, self).__init__()
 
         self.in_channels = in_channels
@@ -97,7 +97,7 @@ class FNO_RNN_2d(torch.nn.Module):
 
         self.fourier_conv_layers = torch.nn.ModuleList()
         for _ in range(self.depth):
-          self.fourier_conv_layers.append(FourierConv2d(self.width, self.width, spatial_size_x, spatial_size_y ))
+          self.fourier_conv_layers.append(FourierConv2d(self.width, self.width, spatial_size_x, spatial_size_y, full_spectrum = full_spectrum))
 
         self.w = torch.nn.ModuleList()
         for _ in range(self.depth):

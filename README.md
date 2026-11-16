@@ -24,3 +24,12 @@ gamma = 1.0, kappa = 0.1 run 4
 gamma = 1.0, kappa = 1.0 run 4
 gamma = 100.0, kappa = 0.1 run 2
 ```uv run python evaluate_extrapolation.py ./output/pdeparamsweep```
+
+### Spectral layer of FGRU and FRNN
+The original `FourierConv2d` keeps only the kx >= 0 half of the `rfft2` output, which drops half of the 2D spectrum.
+The results in the paper use this layer, which remains the default (`nnarch.full_spectrum=false`).
+Set `nnarch.full_spectrum=true` to keep the full spectrum, e.g.
+```uv run python train_2d_plate.py -m +experiment=testrun solver/damping=freqdependent nnarch.full_spectrum=true```
+
+### Run the tests
+```uv run pytest```
