@@ -7,9 +7,7 @@ import time
 import shutil
 
 from platefno.solver.linear_plate_solver import LinearPlateSolver
-from platefno.nn.fno_rnn import FNO_RNN_2d
-from platefno.nn.fno_gru import FNO_GRU_2d
-from platefno.nn.fno_ref import FNO_Markov_2d
+from platefno.nn.models import build_models
 import matplotlib.pyplot as plt
 
 from platefno.util.conf import get_config, get_t60
@@ -118,38 +116,7 @@ def train(cfg: DictConfig):
     training_output = training_output[:-num_validation, ...]
 
     # Instantiate the models
-    # print(f"Instantiate GRU model")
-    model_gru = torch.nn.DataParallel(
-        FNO_GRU_2d(
-            in_channels=cfg.solver.num_state_variables,
-            out_channels=cfg.solver.num_state_variables,
-            spatial_size_x=solver.Nx,
-            spatial_size_y=solver.Ny,
-            width=cfg.nnarch.width,
-        )
-    ).to(device)
-    # print(f"Instantiate RNN model")
-    model_rnn = torch.nn.DataParallel(
-        FNO_RNN_2d(
-            in_channels=cfg.solver.num_state_variables,
-            out_channels=cfg.solver.num_state_variables,
-            spatial_size_x=solver.Nx,
-            spatial_size_y=solver.Ny,
-            depth=cfg.nnarch.depth,
-            width=cfg.nnarch.width,
-        )
-    ).to(device)
-    # print(f"Instantiate Ref model")
-    model_ref = torch.nn.DataParallel(
-        FNO_Markov_2d(
-            in_channels=cfg.solver.num_state_variables,
-            out_channels=cfg.solver.num_state_variables,
-            spatial_size_x=solver.Nx,
-            spatial_size_y=solver.Ny,
-            depth=cfg.nnarch.depth,
-            width=cfg.nnarch.width,
-        )
-    ).to(device)
+    model_gru, model_rnn, model_ref = build_models(cfg, solver.Nx, solver.Ny, device)
 
     # List of all parameters to be optimzed, also for gradient clipping
     params = (
