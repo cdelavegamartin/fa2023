@@ -14,8 +14,11 @@ from platefno.util.eval import (
     run_model_inference,
     get_norms,
     get_divergence_rate,
+    label_variants,
     rename_model,
+    run_settings,
 )
+from platefno.nn.models import MODEL_NAMES
 from platefno.util.plot import plot_mse_per_timestep,plot_run_output_single_ic
 
 # function 
@@ -187,44 +190,18 @@ def evaluate_run_extrapolation_divergence(dir_name, steps=100, num_variations=10
         print(f"RNN divergence rate: {val_rnn_divergence_rate}")
         print(f"REF divergence rate: {val_ref_divergence_rate}")
 
-    results = []
-    # create a dict with the results
-    results.append(
+    # One row per model, with the settings that identify the run
+    rates = (val_gru_divergence_rate, val_rnn_divergence_rate, val_ref_divergence_rate)
+    results = [
         {
-            "model": "gru",
-            "gamma": cfg.solver.gamma,
-            "kappa": cfg.solver.kappa,
-            "ic_train": cfg.train.ic,
+            "model": name,
+            **run_settings(cfg),
             "ic_eval": cfg.train.ic,
-            "seed_train": cfg.train.random_seed,
             "seed_eval": seed,
-            "div_rate": val_gru_divergence_rate,
+            "div_rate": rate,
         }
-    )
-    results.append(
-        {
-            "model": "rnn",
-            "gamma": cfg.solver.gamma,
-            "kappa": cfg.solver.kappa,
-            "ic_train": cfg.train.ic,
-            "ic_eval": cfg.train.ic,
-            "seed_train": cfg.train.random_seed,
-            "seed_eval": seed,
-            "div_rate": val_rnn_divergence_rate,
-        }
-    )
-    results.append(
-        {
-            "model": "ref",
-            "gamma": cfg.solver.gamma,
-            "kappa": cfg.solver.kappa,
-            "ic_train": cfg.train.ic,
-            "ic_eval": cfg.train.ic,
-            "seed_train": cfg.train.random_seed,
-            "seed_eval": seed,
-            "div_rate": val_ref_divergence_rate,
-        }
-    )
+        for name, rate in zip(MODEL_NAMES, rates)
+    ]
     if len(results) == 0:
         return None
     df = pd.DataFrame.from_dict(results)
@@ -345,6 +322,8 @@ def plot_combined_extrapolation(dir_name, steps=100, num_variations=10, seed=0, 
 def create_latex_table_div_single_ic(
     df, ic="pluck", file="./crossval_total.tex"
 ):
+    # name each run variant (e.g. full spectrum) so that grouping keeps them apart
+    df = label_variants(df)
     # average over seeds
     df_filtered = (
         df.groupby(["model", "gamma", "kappa", "ic_train", "ic_eval"])
