@@ -1,5 +1,5 @@
 """Write the run list of slurm/fullsweep.sbatch and the dataset list of
-slurm/generate_datasets.sh.
+slurm/generate_datasets.sh (the overrides that select each dataset).
 
 Runs: 6 datasets x 6 seeds x {original, full-spectrum} FourierConv2d x {joint,
 separate} gradient clipping. A joint-clipping run trains FGRU, FRNN and REF in one
@@ -26,15 +26,9 @@ DATASETS = {
     "plate, gamma=100, kappa=1": f"{PLATE} solver.gamma=100.0 solver.kappa=1.0",
     # Plate solver with the parameters of the 2D wave equation of Parker et al.
     "plate as 2D wave": f"{WAVE} train.ic=mix",
-    # Original 2D wave data (DAFX22_FNO generate_dataset.py wave2d --steps 40); the
-    # solver settings only label the run, the data comes from data.path
-    "FTM 2D wave": (
-        f"{WAVE} train.ic=impulse_random data.name=wave2d_ftm "
-        "solver.num_state_variables=3"
-    ),
+    # FTM 2D wave equation of Parker et al. (conf/solver/wave2d.yaml)
+    "FTM 2D wave": "solver=wave2d train.ic=impulse_random",
 }
-# Datasets that generate_dataset.py of this repository creates
-PLATE_DATASETS = [k for k in DATASETS if not k.startswith("FTM")]
 SEEDS = range(6)
 MODELS = ("gru", "rnn", "ref")
 
@@ -70,10 +64,8 @@ def main():
     lines = list(runs())
     check(lines)
     (HERE / "fullsweep_runs.txt").write_text("\n".join(lines) + "\n")
-    (HERE / "fullsweep_datasets.txt").write_text(
-        "\n".join(DATASETS[k] for k in PLATE_DATASETS) + "\n"
-    )
-    print(f"{len(lines)} runs, {len(PLATE_DATASETS)} plate datasets")
+    (HERE / "fullsweep_datasets.txt").write_text("\n".join(DATASETS.values()) + "\n")
+    print(f"{len(lines)} runs, {len(DATASETS)} datasets")
 
 
 if __name__ == "__main__":

@@ -3,8 +3,11 @@
 # slurm/make_run_list.py): 6 datasets x seeds 0-5 x {original, full-spectrum}
 # FourierConv2d x {joint clipping (FGRU, FRNN and REF in one task), separate clipping
 # (one task per model)}.
+# Outputs (runs and datasets) go to $FA2023_OUTPUT, e.g. a scratch directory; the job
+# inherits it from the submitting shell (output/ in the repository if unset).
 # Submit from the repository root, after `uv sync --extra cu126` and
-# `bash slurm/generate_datasets.sh <DAFX22_FNO checkout>`:
+# `bash slurm/generate_datasets.sh` with the same FA2023_OUTPUT:
+#   export FA2023_OUTPUT=/path/to/scratch/fa2023
 #   sbatch slurm/fullsweep.sbatch                 # all runs
 #   sbatch -a 1-4 slurm/fullsweep.sbatch          # a subset of lines
 #   sbatch -a 1-288%40 slurm/fullsweep.sbatch     # at most 40 tasks at a time
