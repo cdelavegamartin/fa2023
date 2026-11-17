@@ -11,6 +11,7 @@ hydra:
       train.num_steps_train: 40
       train.ic: pluck
       train.random_seed: 0,1,2
+      train.clip_jointly: true # as in the paper
       solver.gamma: 1.0, 100.0
       solver.kappa: 0.1, 1.0
 
