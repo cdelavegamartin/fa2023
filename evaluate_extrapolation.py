@@ -14,6 +14,7 @@ from platefno.util.eval import (
     run_model_inference,
     get_norms,
     get_divergence_rate,
+    format_parameter,
     label_variants,
     load_extrapolation_data,
     rename_model,
@@ -273,7 +274,7 @@ def create_latex_table_div_single_ic(
     df = label_variants(df)
     # average over seeds
     df_filtered = (
-        df.groupby(["dataset", "model", "gamma", "kappa", "ic_train", "ic_eval"])
+        df.groupby(["dataset", "model", "gamma", "kappa", "ic_train", "ic_eval"], dropna=False)
         .agg({"div_rate": ["mean", "min", "max"]})
         .reset_index()
     )
@@ -287,8 +288,8 @@ def create_latex_table_div_single_ic(
     # format the model column
     df_filtered["model"] = df_filtered["model"].apply(rename_model)
     # format the gamma and kappa columns
-    df_filtered["gamma"] = df_filtered["gamma"].apply(lambda x: f"{x:.1f}")
-    df_filtered["kappa"] = df_filtered["kappa"].apply(lambda x: f"{x:.1f}")
+    df_filtered["gamma"] = df_filtered["gamma"].apply(format_parameter)
+    df_filtered["kappa"] = df_filtered["kappa"].apply(format_parameter)
     # Combine gamma and kappa for display
     # df_filtered = combine_gamma_kappa(df_filtered)
     #  change the order of the columns

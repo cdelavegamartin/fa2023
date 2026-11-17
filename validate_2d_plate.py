@@ -19,6 +19,7 @@ from platefno.util.eval import (
     format_mse,
     create_mean_std,
     combine_gamma_kappa,
+    format_parameter,
     label_variants,
     with_variant_columns,
     VARIANT_DEFAULTS,
@@ -91,7 +92,7 @@ def create_latex_table_val_results(
     # average over seeds, keeping the run variants apart
     df = with_variant_columns(df)
     df_filtered = (
-        df.groupby(["dataset", "model", *VARIANT_DEFAULTS, "gamma", "kappa", "ic_train", "ic_eval"])
+        df.groupby(["dataset", "model", *VARIANT_DEFAULTS, "gamma", "kappa", "ic_train", "ic_eval"], dropna=False)
         .agg({"mse_u": ["mean", "std"], "mse_v": ["mean", "std"]})
         .reset_index()
     )
@@ -124,7 +125,7 @@ def create_latex_table_val_results_alt(
     df = label_variants(df)
     # average over seeds
     df_filtered = (
-        df.groupby(["dataset", "model", "gamma", "kappa", "ic_train", "ic_eval"])
+        df.groupby(["dataset", "model", "gamma", "kappa", "ic_train", "ic_eval"], dropna=False)
         .agg({"mse_u": ["mean", "std"], "mse_v": ["mean", "std"]})
         .reset_index()
     )
@@ -191,7 +192,7 @@ def create_latex_table_val_results_single_ic(
     df = label_variants(df)
     # average over seeds
     df_filtered = (
-        df.groupby(["dataset", "model", "gamma", "kappa", "ic_train", "ic_eval"])
+        df.groupby(["dataset", "model", "gamma", "kappa", "ic_train", "ic_eval"], dropna=False)
         .agg({"mse_u": ["mean", "std"], "mse_v": ["mean", "std"]})
         .reset_index()
     )
@@ -207,8 +208,8 @@ def create_latex_table_val_results_single_ic(
     # format the model column
     df_filtered["model"] = df_filtered["model"].apply(rename_model)
     # format the gamma and kappa columns
-    df_filtered["gamma"] = df_filtered["gamma"].apply(lambda x: f"{x:.1f}")
-    df_filtered["kappa"] = df_filtered["kappa"].apply(lambda x: f"{x:.1f}")
+    df_filtered["gamma"] = df_filtered["gamma"].apply(format_parameter)
+    df_filtered["kappa"] = df_filtered["kappa"].apply(format_parameter)
     # Combine gamma and kappa for display
     # df_filtered = combine_gamma_kappa(df_filtered)
     #  change the order of the columns

@@ -22,7 +22,7 @@ domain:
 # data.seed sets the dataset's random initial conditions and the order of the
 # training batches; train.random_seed only sets the models' initial weights.
 data:
-  name: gamma_${solver.gamma}-kappa_${solver.kappa}-damping_${solver.damping.name}
+  name: ${solver.dataset_name}
   seed: 0
   path: output/datasets/${data.name}/ic_${train.ic}-n_${train.num_variations}-steps_${train.num_steps_train}-seed_${data.seed}.npy
   mean: null

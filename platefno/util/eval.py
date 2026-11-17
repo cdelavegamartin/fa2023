@@ -4,7 +4,9 @@ import numpy as np
 import pathlib
 import pandas as pd
 from platefno.util.conf import get_config
-from platefno.data import make_solver
+from omegaconf import OmegaConf
+
+from platefno.data import grid_size
 from platefno.nn.models import MODEL_NAMES, build_models
 
 
@@ -62,11 +64,11 @@ def load_models_from_dir(dir_name):
     torch.manual_seed(cfg.train.random_seed)  # Set seed for reproducibility
     np.random.seed(cfg.train.random_seed)
 
-    solver = make_solver(cfg)  # gives the grid size of the models
+    size_x, size_y = grid_size(cfg)
 
     # Instantiate the models
     model_gru, model_rnn, model_ref = build_models(
-        cfg, solver.Nx, solver.Ny, device
+        cfg, size_x, size_y, device
     ).values()
 
     # Load the models
@@ -237,10 +239,12 @@ def run_settings(cfg):
     original layer and joint clipping.
     """
     return {
-        "dataset": cfg.get("data", {}).get("name", default_dataset_name(cfg.solver)),
-        "gamma": cfg.solver.gamma,
-        "kappa": cfg.solver.kappa,
-        "damping": cfg.solver.damping.name,
+        "dataset": OmegaConf.select(cfg, "data.name")
+        or default_dataset_name(cfg.solver),
+        # None for solvers without these parameters (wave2d)
+        "gamma": OmegaConf.select(cfg, "solver.gamma"),
+        "kappa": OmegaConf.select(cfg, "solver.kappa"),
+        "damping": OmegaConf.select(cfg, "solver.damping.name"),
         "ic_train": cfg.train.ic,
         "seed_train": cfg.train.random_seed,
         "full_spectrum": bool(cfg.nnarch.get("full_spectrum", False)),
@@ -439,6 +443,11 @@ def rename_model(model_name):
         return "REF"
     else:
         return model_name
+
+
+def format_parameter(x):
+    """PDE parameter for the tables; "-" when the run's solver does not have it."""
+    return "-" if x is None or pd.isna(x) else f"{x:.1f}"
 
 
 def format_mse(x, tol=5.0):

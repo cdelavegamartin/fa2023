@@ -2,6 +2,7 @@ import pandas as pd
 from omegaconf import OmegaConf
 
 from platefno.util.eval import (
+    format_parameter,
     label_variants,
     run_settings,
     validation_seeds,
@@ -106,3 +107,19 @@ def test_table_keeps_variants_apart(tmp_path):
     assert row["Displacement"].iloc[0].startswith("0.5000")
     assert "FGRU, full spectrum" in models
     assert (tmp_path / "val.tex").exists()
+
+
+def test_run_settings_without_plate_parameters():
+    cfg = OmegaConf.create(
+        {
+            "solver": {"name": "wave2d"},
+            "data": {"name": "wave2d_ftm"},
+            "nnarch": {"width": 8},
+            "train": {"ic": "impulse_random", "random_seed": 0},
+        }
+    )
+    settings = run_settings(cfg)
+    assert settings["dataset"] == "wave2d_ftm"
+    assert settings["gamma"] is None and settings["damping"] is None
+    assert format_parameter(settings["gamma"]) == "-"
+    assert format_parameter(100.0) == "100.0"

@@ -6,4 +6,5 @@ name: linearplate
 gamma: 100
 kappa: 0.1
 num_state_variables: 2
+dataset_name: gamma_${solver.gamma}-kappa_${solver.kappa}-damping_${solver.damping.name}
 
