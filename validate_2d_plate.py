@@ -267,12 +267,13 @@ if __name__ == "__main__":
         evaluate_run(run_dir)
 
     df = aggregate_experiment_val_results(dir_name)
-    ic = "pluck"
-    create_latex_table_val_results_single_ic(
-        df,
-        ic=ic,
-        file=os.path.join(dir_name, f"val_{ic}.tex"),
-    )
+    # One table per initial condition the runs were trained on
+    for ic in df["ic_train"].unique():
+        create_latex_table_val_results_single_ic(
+            df,
+            ic=ic,
+            file=os.path.join(dir_name, f"val_{ic}.tex"),
+        )
 
     timer_end = time.time()
     print(f"Elapsed time: {timer_end - timer_start} seconds")
