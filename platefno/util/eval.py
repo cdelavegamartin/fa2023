@@ -5,7 +5,7 @@ import pathlib
 import pandas as pd
 from platefno.util.conf import get_config
 from platefno.data import make_solver
-from platefno.nn.models import build_models
+from platefno.nn.models import MODEL_NAMES, build_models
 
 
 def get_run_dirs(dir_name):
@@ -208,6 +208,58 @@ def get_divergence_rate(mse_per_timestep):
     return (gru_div_rate, rnn_div_rate, ref_div_rate)
 
 
+def run_settings(cfg):
+    """Settings that identify a trained run, for the result tables.
+
+    Configurations saved before full_spectrum and clip_jointly existed used the
+    original layer and joint clipping.
+    """
+    return {
+        "gamma": cfg.solver.gamma,
+        "kappa": cfg.solver.kappa,
+        "damping": cfg.solver.damping.name,
+        "ic_train": cfg.train.ic,
+        "seed_train": cfg.train.random_seed,
+        "full_spectrum": bool(cfg.nnarch.get("full_spectrum", False)),
+        "clip_jointly": bool(cfg.train.get("clip_jointly", True)),
+    }
+
+
+VARIANT_DEFAULTS = {"full_spectrum": False, "clip_jointly": True}
+
+
+def with_variant_columns(df):
+    """Copy of df with the run-variant columns, filled with the defaults of
+    run_settings for rows saved before these settings existed."""
+    df = df.copy()
+    for column, default in VARIANT_DEFAULTS.items():
+        if column not in df:
+            df[column] = default
+        df[column] = df[column].fillna(default).astype(bool)
+    return df
+
+
+def label_variants(df):
+    """Copy of df whose "model" column names the model and its run variant.
+
+    E.g. "FGRU, full spectrum"; the clipping mode is named only when df holds
+    both modes. Grouping by "model" then keeps the variants apart.
+    """
+    df = with_variant_columns(df)
+    show_clip = df["clip_jointly"].nunique() > 1
+
+    def label(row):
+        parts = [rename_model(row["model"])]
+        if row["full_spectrum"]:
+            parts.append("full spectrum")
+        if show_clip:
+            parts.append("joint clip" if row["clip_jointly"] else "separate clip")
+        return ", ".join(parts)
+
+    df["model"] = df.apply(label, axis=1)
+    return df
+
+
 def calculate_mse_crossval(dir_name, ic_eval=["pluck", "random"], num_seeds=3):
     cfg = get_config(dir_name)
     output_dir = dir_name
@@ -281,46 +333,18 @@ def calculate_mse_crossval(dir_name, ic_eval=["pluck", "random"], num_seeds=3):
                 validation_output,
             )
 
-            # create a dict with the results
-            results.append(
-                {
-                    "model": "gru",
-                    "gamma": cfg.solver.gamma,
-                    "kappa": cfg.solver.kappa,
-                    "ic_train": cfg.train.ic,
-                    "ic_eval": ic_name,
-                    "seed_train": cfg.train.random_seed,
-                    "seed_eval": seed,
-                    "mse_u": val_gru_mse[0],
-                    "mse_v": val_gru_mse[1],
-                }
-            )
-            results.append(
-                {
-                    "model": "rnn",
-                    "gamma": cfg.solver.gamma,
-                    "kappa": cfg.solver.kappa,
-                    "ic_train": cfg.train.ic,
-                    "ic_eval": ic_name,
-                    "seed_train": cfg.train.random_seed,
-                    "seed_eval": seed,
-                    "mse_u": val_rnn_mse[0],
-                    "mse_v": val_rnn_mse[1],
-                }
-            )
-            results.append(
-                {
-                    "model": "ref",
-                    "gamma": cfg.solver.gamma,
-                    "kappa": cfg.solver.kappa,
-                    "ic_train": cfg.train.ic,
-                    "ic_eval": ic_name,
-                    "seed_train": cfg.train.random_seed,
-                    "seed_eval": seed,
-                    "mse_u": val_ref_mse[0],
-                    "mse_v": val_ref_mse[1],
-                }
-            )
+            # One row per model, with the settings that identify the run
+            for name, mse in zip(MODEL_NAMES, (val_gru_mse, val_rnn_mse, val_ref_mse)):
+                results.append(
+                    {
+                        "model": name,
+                        **run_settings(cfg),
+                        "ic_eval": ic_name,
+                        "seed_eval": seed,
+                        "mse_u": mse[0],
+                        "mse_v": mse[1],
+                    }
+                )
     if len(results) == 0:
         return None
     df = pd.DataFrame.from_dict(results)

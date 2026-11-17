@@ -19,6 +19,9 @@ from platefno.util.eval import (
     format_mse,
     create_mean_std,
     combine_gamma_kappa,
+    label_variants,
+    with_variant_columns,
+    VARIANT_DEFAULTS,
 )
 from platefno.util.plot import plot_mse_per_timestep
 
@@ -85,9 +88,10 @@ def aggregate_experiment_val_results(exp_dir):
 def create_latex_table_val_results(
     df, gamma=100.0, kappa=0.1, model="gru", file="./crossval_total.tex"
 ):
-    # average over seeds
+    # average over seeds, keeping the run variants apart
+    df = with_variant_columns(df)
     df_filtered = (
-        df.groupby(["model", "gamma", "kappa", "ic_train", "ic_eval"])
+        df.groupby(["model", *VARIANT_DEFAULTS, "gamma", "kappa", "ic_train", "ic_eval"])
         .agg({"mse_u": ["mean", "std"], "mse_v": ["mean", "std"]})
         .reset_index()
     )
@@ -116,6 +120,8 @@ def create_latex_table_val_results(
 def create_latex_table_val_results_alt(
     df, gamma=100.0, kappa=0.1, ic_eval="pluck", file="./crossval_total.tex"
 ):
+    # name each run variant (e.g. full spectrum) so that grouping keeps them apart
+    df = label_variants(df)
     # average over seeds
     df_filtered = (
         df.groupby(["model", "gamma", "kappa", "ic_train", "ic_eval"])
@@ -181,6 +187,8 @@ def create_latex_table_val_results_alt(
 def create_latex_table_val_results_single_ic(
     df, ic="pluck", file="./crossval_total.tex"
 ):
+    # name each run variant (e.g. full spectrum) so that grouping keeps them apart
+    df = label_variants(df)
     # average over seeds
     df_filtered = (
         df.groupby(["model", "gamma", "kappa", "ic_train", "ic_eval"])
