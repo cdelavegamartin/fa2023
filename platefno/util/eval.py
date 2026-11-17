@@ -215,6 +215,7 @@ def run_settings(cfg):
     original layer and joint clipping.
     """
     return {
+        "dataset": cfg.get("data", {}).get("name", default_dataset_name(cfg.solver)),
         "gamma": cfg.solver.gamma,
         "kappa": cfg.solver.kappa,
         "damping": cfg.solver.damping.name,
@@ -225,17 +226,27 @@ def run_settings(cfg):
     }
 
 
+def default_dataset_name(solver):
+    """Dataset name of runs saved before data.name existed (gamma and kappa only)."""
+    return f"gamma_{solver['gamma']}-kappa_{solver['kappa']}"
+
+
 VARIANT_DEFAULTS = {"full_spectrum": False, "clip_jointly": True}
 
 
 def with_variant_columns(df):
-    """Copy of df with the run-variant columns, filled with the defaults of
-    run_settings for rows saved before these settings existed."""
+    """Copy of df with the dataset and run-variant columns, filled with the
+    defaults of run_settings for rows saved before these settings existed."""
     df = df.copy()
     for column, default in VARIANT_DEFAULTS.items():
         if column not in df:
             df[column] = default
         df[column] = df[column].fillna(default).astype(bool)
+    if "dataset" not in df:
+        df["dataset"] = None
+    missing = df["dataset"].isna()
+    if missing.any():
+        df.loc[missing, "dataset"] = df[missing].apply(default_dataset_name, axis=1)
     return df
 
 

@@ -326,7 +326,7 @@ def create_latex_table_div_single_ic(
     df = label_variants(df)
     # average over seeds
     df_filtered = (
-        df.groupby(["model", "gamma", "kappa", "ic_train", "ic_eval"])
+        df.groupby(["dataset", "model", "gamma", "kappa", "ic_train", "ic_eval"])
         .agg({"div_rate": ["mean", "min", "max"]})
         .reset_index()
     )
@@ -348,9 +348,10 @@ def create_latex_table_div_single_ic(
     df_filtered.sort_values(by=["model"], inplace=True)
     df_filtered.sort_values(by=["kappa"], inplace=True)
     df_filtered.sort_values(by=["gamma"], inplace=True)
+    df_filtered.sort_values(by=["dataset"], inplace=True, kind="stable")
 
     # df_filtered.set_index(["gamma_kappa", "model"], inplace=True)
-    df_filtered.set_index(["gamma", "kappa", "model"], inplace=True)
+    df_filtered.set_index(["dataset", "gamma", "kappa", "model"], inplace=True)
     # rename columns
     df_filtered.rename(
         columns={
@@ -358,7 +359,7 @@ def create_latex_table_div_single_ic(
         },
         inplace=True,
     )
-    df_filtered.rename_axis(["$\gamma$", "$\kappa$", "Model"], inplace=True)
+    df_filtered.rename_axis(["Dataset", "$\gamma$", "$\kappa$", "Model"], inplace=True)
 
     # df_filtered.drop(columns=["gamma", "kappa"], inplace=True)
     print(df_filtered)

@@ -91,7 +91,7 @@ def create_latex_table_val_results(
     # average over seeds, keeping the run variants apart
     df = with_variant_columns(df)
     df_filtered = (
-        df.groupby(["model", *VARIANT_DEFAULTS, "gamma", "kappa", "ic_train", "ic_eval"])
+        df.groupby(["dataset", "model", *VARIANT_DEFAULTS, "gamma", "kappa", "ic_train", "ic_eval"])
         .agg({"mse_u": ["mean", "std"], "mse_v": ["mean", "std"]})
         .reset_index()
     )
@@ -124,7 +124,7 @@ def create_latex_table_val_results_alt(
     df = label_variants(df)
     # average over seeds
     df_filtered = (
-        df.groupby(["model", "gamma", "kappa", "ic_train", "ic_eval"])
+        df.groupby(["dataset", "model", "gamma", "kappa", "ic_train", "ic_eval"])
         .agg({"mse_u": ["mean", "std"], "mse_v": ["mean", "std"]})
         .reset_index()
     )
@@ -191,7 +191,7 @@ def create_latex_table_val_results_single_ic(
     df = label_variants(df)
     # average over seeds
     df_filtered = (
-        df.groupby(["model", "gamma", "kappa", "ic_train", "ic_eval"])
+        df.groupby(["dataset", "model", "gamma", "kappa", "ic_train", "ic_eval"])
         .agg({"mse_u": ["mean", "std"], "mse_v": ["mean", "std"]})
         .reset_index()
     )
@@ -215,9 +215,10 @@ def create_latex_table_val_results_single_ic(
     df_filtered.sort_values(by=["model"], inplace=True)
     df_filtered.sort_values(by=["kappa"], inplace=True)
     df_filtered.sort_values(by=["gamma"], inplace=True)
+    df_filtered.sort_values(by=["dataset"], inplace=True, kind="stable")
 
     # df_filtered.set_index(["gamma_kappa", "model"], inplace=True)
-    df_filtered.set_index(["gamma", "kappa", "model"], inplace=True)
+    df_filtered.set_index(["dataset", "gamma", "kappa", "model"], inplace=True)
     # rename columns
     df_filtered.rename(
         columns={
@@ -226,7 +227,7 @@ def create_latex_table_val_results_single_ic(
         },
         inplace=True,
     )
-    df_filtered.rename_axis(["$\gamma$", "$\kappa$", "Model"], inplace=True)
+    df_filtered.rename_axis(["Dataset", "$\gamma$", "$\kappa$", "Model"], inplace=True)
 
     # df_filtered.drop(columns=["gamma", "kappa"], inplace=True)
     print(df_filtered)
