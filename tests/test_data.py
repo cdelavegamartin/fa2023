@@ -56,3 +56,15 @@ def test_output_root_follows_environment(monkeypatch):
     assert config().data.path.startswith("/scratch/user/fa2023/datasets/")
     monkeypatch.delenv("FA2023_OUTPUT")
     assert config().data.path.startswith("output/datasets/")
+
+
+def test_plate_starts_from_the_wave2d_pressure():
+    common = ("train.ic=impulse_random", "train.num_steps_train=2")
+    plate = simulate(config("solver/damping=nodamping", "solver.gamma=340.0", "solver.kappa=0.0", *common))
+    wave = simulate(config("solver=wave2d", *common))
+    for i in range(plate.shape[0]):
+        p0 = wave[i, 0, ..., 0].astype(np.float64)
+        p0[[0, -1], :] = 0
+        p0[:, [0, -1]] = 0
+        assert np.allclose(plate[i, 0, ..., 0], p0 / np.abs(p0).max(), atol=1e-6)
+        assert np.all(plate[i, 0, ..., 1] == 0)
