@@ -27,6 +27,14 @@ data:
   path: output/datasets/${data.name}/ic_${train.ic}-n_${train.num_variations}-steps_${train.num_steps_train}-seed_${data.seed}.npy
   mean: null
   std: null
+  # Extrapolation dataset of the same configuration (fewer, longer trajectories, as
+  # in the paper), read by evaluate_extrapolation.py; generate it with
+  # generate_dataset.py train.num_variations=30 train.num_steps_train=2000 data.seed=5
+  extrapolation:
+    num_variations: 30
+    num_steps: 2000
+    seed: 5
+    path: output/datasets/${data.name}/ic_${train.ic}-n_${data.extrapolation.num_variations}-steps_${data.extrapolation.num_steps}-seed_${data.extrapolation.seed}.npy
 
 train:
   device: cuda

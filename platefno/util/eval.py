@@ -98,6 +98,28 @@ def load_data(dir_name):
     return validation_input, validation_output
 
 
+def load_extrapolation_data(dir_name, steps, num_variations, base_dir="."):
+    """Raw extrapolation input (n, 1, x, y, c) and target (n, steps - 1, x, y, c) of
+    a run, scaled by the run's normalisation, as numpy arrays.
+
+    Reads the first num_variations trajectories and steps time steps of
+    data.extrapolation.path (relative to base_dir); returns None for runs saved
+    before that setting existed, which simulate their data instead.
+    """
+    extrapolation = (get_config(dir_name).get("data") or {}).get("extrapolation")
+    if extrapolation is None:
+        return None
+    path = os.path.join(base_dir, extrapolation.path)
+    data = np.load(path, mmap_mode="r")
+    if steps > data.shape[1] or num_variations > data.shape[0]:
+        raise ValueError(
+            f"{path} has {data.shape[0]} trajectories of {data.shape[1]} steps; "
+            f"{num_variations} of {steps} were requested"
+        )
+    data = np.array(data[:num_variations, :steps]) * get_norms(dir_name).numpy()
+    return data[:, :1].astype(np.float32), data[:, 1:].astype(np.float32)
+
+
 def run_model_inference(models, model_input, num_steps):
     # Unpack the models
     model_gru, model_rnn, model_ref = models
