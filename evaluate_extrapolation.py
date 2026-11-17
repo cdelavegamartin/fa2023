@@ -34,6 +34,7 @@ def extrapolation_data(run_dir, cfg, steps, num_variations):
     """
     data = load_extrapolation_data(run_dir, steps, num_variations)
     if data is None:
+        fs = cfg.domain.sampling_rate
         solver = LinearPlateSolver(
             SR=fs,
             TF=steps / fs,
@@ -203,6 +204,7 @@ def plot_combined_extrapolation(dir_name, steps=100, num_variations=10, seed=0, 
         model_input, ground_truth_output = extrapolation_data(
             run_dir, cfg, steps, num_variations
         )
+        fs = cfg.domain.sampling_rate
 
         # Move data to device
         model_input = model_input.to(device)
