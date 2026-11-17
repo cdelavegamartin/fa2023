@@ -288,11 +288,30 @@ def validation_seeds(dir_name, ic_name, num_seeds=None):
     )
 
 
+def dataset_path(dir_name):
+    """data.path of a run, or None for runs saved before it existed."""
+    data = get_config(dir_name).get("data")
+    return None if data is None else data.get("path")
+
+
+def repeats_own_dataset(dir_name, other_dir):
+    """True when other_dir is another run trained on the same dataset file, so its
+    validation data repeats the run's own."""
+    if pathlib.Path(other_dir).resolve() == pathlib.Path(dir_name).resolve():
+        return False
+    if not (pathlib.Path(other_dir) / ".hydra").is_dir():
+        return False
+    own = dataset_path(dir_name)
+    return own is not None and own == dataset_path(other_dir)
+
+
 def calculate_mse_crossval(dir_name, ic_eval=None, num_seeds=None):
     """MSE of the run's models on the validation data of every seed (and initial
-    condition) of the same experiment.
+    condition) of the same experiment, once per distinct dataset.
 
     ic_eval=None evaluates the run's own initial condition, plus pluck and random.
+    Runs of other seeds that share the run's dataset are skipped, since their
+    validation data is the run's own.
     """
     cfg = get_config(dir_name)
     if ic_eval is None:
@@ -312,6 +331,8 @@ def calculate_mse_crossval(dir_name, ic_eval=None, num_seeds=None):
             # get the validation data
             val_data_dir = get_val_data_path(dir_name, ic_name=ic_name, seed=seed)
             if val_data_dir is None:
+                continue
+            if repeats_own_dataset(dir_name, val_data_dir):
                 continue
             if not os.path.exists(val_data_dir):
                 continue
