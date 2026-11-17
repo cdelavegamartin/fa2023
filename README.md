@@ -55,5 +55,15 @@ Every (gamma, kappa) of the paper with the original and the full-spectrum layer 
 ```uv run python generate_dataset.py -m +experiment=fullspectrumsweep solver/damping=freqdependent nnarch.full_spectrum=false hydra.sweep.dir=output/generate_dataset```
 ```uv run python train_2d_plate.py -m +experiment=fullspectrumsweep solver/damping=freqdependent```
 
+The same layers on a plate set up as the 2D wave equation of Parker et al. (gamma = 340, kappa = 0, no decay, 33 output steps, mixed initial conditions; the boundary conditions differ):
+```uv run python generate_dataset.py solver.gamma=340.0 solver.kappa=0.0 solver/damping=constant solver.damping.T60=1e9 train.num_steps_train=34 train.ic=mix hydra.run.dir=output/generate_dataset/wave2d_fd```
+
+#### On SLURM
+`slurm/fullspectrumsweep.sbatch` runs the sweep as 10 array tasks, one GPU each: tasks 0–7 are the plate runs, 8–9 the wave-like runs.
+Submit it from the repository root after `uv sync --extra cu126` and generating the datasets above:
+```sbatch slurm/fullspectrumsweep.sbatch```
+`sbatch -a 8-9 slurm/fullspectrumsweep.sbatch` runs a subset; arguments after the script name go to `train_2d_plate.py` (e.g. `train.epochs=1` for a quick check).
+Account, partition, runtime and resources are in the `#SBATCH` lines.
+
 ### Run the tests
 ```uv run pytest```
