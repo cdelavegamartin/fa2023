@@ -18,6 +18,13 @@ Training reads a dataset from `data.path`: one raw `.npy` array of shape (trajec
 ```uv run python generate_dataset.py -m +experiment=testrun solver/damping=freqdependent hydra.sweep.dir=output/generate_dataset```
 ```uv run python generate_dataset.py -m +experiment=pdeparamsweep solver/damping=freqdependent hydra.sweep.dir=output/generate_dataset```
 
+`data.seed` (default 0) sets the dataset's random initial conditions and the batch order; `train.random_seed` only sets the models' initial weights, so all seeds of a sweep share one dataset.
+The paper generated one dataset per seed; `'data.seed=${train.random_seed}'` restores that.
+
+`evaluate_extrapolation.py` reads a second dataset per configuration, `data.extrapolation.path` (30 trajectories of 2000 steps, data seed 5, as in the paper):
+```uv run python generate_dataset.py -m +experiment=pdeparamsweep solver/damping=freqdependent train.num_variations=30 train.num_steps_train=2000 data.seed=5 hydra.sweep.dir=output/generate_dataset```
+Runs without `data.extrapolation` in their saved configuration simulate the extrapolation data instead.
+
 Training standardises the data as `(data - data.mean) / data.std` per channel.
 `data.mean` defaults to 0 (scale only, as in the paper; the evaluation scripts assume it) and `data.std` to the std of the training split, e.g. `'data.std=[0.04,130.0]'` fixes it.
 The paper's runs used the std of the output steps of all trajectories, validation included, so the scale differs slightly unless `data.std` is set.
@@ -50,10 +57,24 @@ Each model has its own optimiser and learning-rate schedule, and its own initial
 - `train.clip_jointly` clips the concatenated gradients of the run's models together, as in the paper (`pdeparamsweep` sets it); the default `false` clips each model on its own.
   With the log10 loss, the gradient grows as the loss falls, so under joint clipping the model with the lowest loss shrinks the steps of the others.
 
-### Full-spectrum sweep
-Every (gamma, kappa) of the paper with the original and the full-spectrum layer (seed 0); both use the same dataset.
-```uv run python generate_dataset.py -m +experiment=fullspectrumsweep solver/damping=freqdependent nnarch.full_spectrum=false hydra.sweep.dir=output/generate_dataset```
-```uv run python train_2d_plate.py -m +experiment=fullspectrumsweep solver/damping=freqdependent```
+### Full sweep: spectrum and gradient clipping
+`slurm/fullsweep.sbatch` trains 6 datasets x seeds 0–5 x {original, full-spectrum} FourierConv2d x {joint, separate} gradient clipping, as 288 SLURM array tasks, one per line of `slurm/fullsweep_runs.txt`:
+- datasets: the 4 (gamma, kappa) of the paper; the plate solver with the parameters of the 2D wave equation of Parker et al. (gamma = 340, kappa = 0, no damping, mixed initial conditions; the boundary conditions differ); the original 2D wave equation (FTM, 3 channels) from DAFX22_FNO with 40 steps;
+- joint clipping trains FGRU, FRNN and REF in one task; separate clipping trains one model per task, and the three tasks share the run directory;
+- runs go to `output/fullspectrumsweep/<data.name>/ic_<ic>/full_spectrum_<bool>-clip_jointly_<bool>/seed_<n>`.
+
+`slurm/make_run_list.py` writes the run list and `slurm/fullsweep_datasets.txt`; it checks that every line fixes every swept setting of `conf/experiment/fullspectrumsweep.yaml`.
+
+From the repository root, after `uv sync --extra cu126`:
+```bash
+bash slurm/generate_datasets.sh <DAFX22_FNO checkout>   # training and extrapolation datasets, CPU
+sbatch slurm/fullsweep.sbatch                             # all 288 tasks
+sbatch -a 1-4 slurm/fullsweep.sbatch train.epochs=1       # quick check of the first run
+uv run python validate_2d_plate.py output/fullspectrumsweep
+uv run python evaluate_extrapolation.py output/fullspectrumsweep
+```
+Arguments after the script name go to `train_2d_plate.py`; `-a 1-288%40` limits the number of simultaneous tasks.
+The result tables report the first two channels (displacement and velocity; pressure and x-velocity for the FTM dataset).
 
 ### Run the tests
 ```uv run pytest```
