@@ -1,8 +1,8 @@
 # @package _global_
 # Original vs full-spectrum FourierConv2d (phd-thesis#85) and joint vs separate
 # gradient clipping, on the stiff-plate datasets of the paper; slurm/fullsweep_runs.txt
-# adds the 2D-wave-like datasets. Every run with the same dataset and seed uses the
-# same data.path. Runs with separate clipping MAY train one model per job
+# adds the 2D-wave-like datasets. train.random_seed only sets the initial weights;
+# all seeds of a dataset use the same data.path. Runs with separate clipping MAY train one model per job
 # ('train.models=[gru]' etc.); those jobs share the run directory.
 hydra:
   sweep:

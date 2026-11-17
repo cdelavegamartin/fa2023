@@ -21,7 +21,8 @@ def test_simulate_shape_and_determinism():
     a, b = simulate(config()), simulate(config())
     assert a.shape == (4, 3, 40, 38, 2) and a.dtype == np.float32
     assert np.array_equal(a, b)
-    assert not np.array_equal(a, simulate(config("train.random_seed=1")))
+    assert not np.array_equal(a, simulate(config("data.seed=1")))
+    assert np.array_equal(a, simulate(config("train.random_seed=1")))
 
 
 @pytest.mark.parametrize("n, val_split, n_val", [(1024, 0.1, 103), (10, 0.1, 1), (4, 0.5, 2)])

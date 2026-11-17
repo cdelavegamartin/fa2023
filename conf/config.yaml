@@ -19,9 +19,12 @@ domain:
 # generate_dataset.py. Training standardises it as (data - mean) / std per channel;
 # mean null means 0 (scale only), std null means the std of the training split.
 # data.name labels the dataset in output paths and result tables.
+# data.seed sets the dataset's random initial conditions and the order of the
+# training batches; train.random_seed only sets the models' initial weights.
 data:
   name: gamma_${solver.gamma}-kappa_${solver.kappa}-damping_${solver.damping.name}
-  path: output/datasets/${data.name}/ic_${train.ic}-n_${train.num_variations}-steps_${train.num_steps_train}-seed_${train.random_seed}.npy
+  seed: 0
+  path: output/datasets/${data.name}/ic_${train.ic}-n_${train.num_variations}-steps_${train.num_steps_train}-seed_${data.seed}.npy
   mean: null
   std: null
 

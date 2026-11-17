@@ -41,11 +41,11 @@ def initial_condition(solver, ic, index, u0_max=1.0, v0_max=0.0):
 
 
 def simulate(cfg):
-    """Simulate cfg.train.num_variations trajectories, seeding numpy with cfg.train.random_seed.
+    """Simulate cfg.train.num_variations trajectories, seeding numpy with cfg.data.seed.
 
     Returns a float32 array (trajectories, time steps, x, y, [displacement, velocity]).
     """
-    np.random.seed(cfg.train.random_seed)
+    np.random.seed(cfg.data.seed)
     solver = make_solver(cfg)
     n = cfg.train.num_variations
     data = np.zeros((n, solver.numT, solver.Nx, solver.Ny, 2), dtype=np.float32)
