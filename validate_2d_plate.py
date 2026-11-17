@@ -9,6 +9,7 @@ import pandas as pd
 
 from platefno.util.conf import get_config
 from platefno.util.eval import (
+    get_device,
     get_run_dirs,
     read_feather,
     calculate_mse_per_timestep,
@@ -31,11 +32,7 @@ def evaluate_run(dir_name):
     model_gru, model_rnn, model_ref = load_models_from_dir(dir_name)
     cfg = get_config(dir_name)
 
-    # Set torch device if posible if not cpu
-    if torch.cuda.is_available() and cfg.train.device == "cuda":
-        device = torch.device(cfg.train.device)
-    else:
-        device = torch.device("cpu")
+    device = get_device(cfg)
 
     validation_input, validation_output = load_data(dir_name)
     validation_input = validation_input.to(device)

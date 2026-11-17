@@ -10,6 +10,13 @@ from platefno.data import grid_size
 from platefno.nn.models import MODEL_NAMES, build_models
 
 
+def get_device(cfg):
+    """cfg.train.device when it is CUDA and CUDA is available, otherwise the CPU."""
+    if torch.cuda.is_available() and cfg.train.device == "cuda":
+        return torch.device("cuda")
+    return torch.device("cpu")
+
+
 def get_run_dirs(dir_name):
     run_dirs = []
     # loop over all the subdirectories recursevily in the directory
@@ -55,11 +62,7 @@ def load_models_from_dir(dir_name):
 
     output_dir = dir_name
 
-    # Set torch device if posible if not cpu
-    if torch.cuda.is_available() and cfg.train.device == "cuda":
-        device = torch.device(cfg.train.device)
-    else:
-        device = torch.device("cpu")
+    device = get_device(cfg)
 
     torch.manual_seed(cfg.train.random_seed)  # Set seed for reproducibility
     np.random.seed(cfg.train.random_seed)
@@ -345,11 +348,7 @@ def calculate_mse_crossval(dir_name, ic_eval=None, num_seeds=None):
     output_dir = dir_name
     model_gru, model_rnn, model_ref = load_models_from_dir(dir_name)
     normalization_multiplier_model = get_norms(dir_name)
-    # Set torch device if posible if not cpu
-    if torch.cuda.is_available() and cfg.train.device == "cuda":
-        device = torch.device(cfg.train.device)
-    else:
-        device = torch.device("cpu")
+    device = get_device(cfg)
 
     results = []
     for ic_name in ic_eval:

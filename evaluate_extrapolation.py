@@ -7,6 +7,7 @@ import pandas as pd
 from platefno.solver.linear_plate_solver import LinearPlateSolver, create_dataset
 from platefno.util.conf import get_config, get_t60
 from platefno.util.eval import (
+    get_device,
     get_run_dirs,
     calculate_mse_per_timestep,
     load_models_from_dir,
@@ -33,7 +34,6 @@ def extrapolation_data(run_dir, cfg, steps, num_variations):
     """
     data = load_extrapolation_data(run_dir, steps, num_variations)
     if data is None:
-        fs = cfg.domain.sampling_rate
         solver = LinearPlateSolver(
             SR=fs,
             TF=steps / fs,
@@ -57,7 +57,7 @@ def evaluate_run_extrapolation(dir_name, steps=100, num_variations=10, seed=0):
     model_gru, model_rnn, model_ref = load_models_from_dir(dir_name)
     cfg = get_config(dir_name)
 
-    device = torch.device(cfg.train.device)
+    device = get_device(cfg)
 
     # Set seed for reproducibility
     # seed = cfg.train.random_seed
@@ -125,7 +125,7 @@ def evaluate_run_extrapolation_divergence(dir_name, steps=100, num_variations=10
     model_gru, model_rnn, model_ref = load_models_from_dir(dir_name)
     cfg = get_config(dir_name)
 
-    device = torch.device(cfg.train.device)
+    device = get_device(cfg)
 
     # Set seed for reproducibility
     # seed = cfg.train.random_seed
@@ -193,7 +193,7 @@ def plot_combined_extrapolation(dir_name, steps=100, num_variations=10, seed=0, 
         # only evaluate if the run is for plucks
         model_gru, model_rnn, model_ref = load_models_from_dir(run_dir)
 
-        device = torch.device(cfg.train.device)
+        device = get_device(cfg)
 
         # Set seed for reproducibility
         model_seed = cfg.train.random_seed
