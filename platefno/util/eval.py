@@ -260,8 +260,32 @@ def label_variants(df):
     return df
 
 
-def calculate_mse_crossval(dir_name, ic_eval=["pluck", "random"], num_seeds=3):
+def validation_seeds(dir_name, ic_name, num_seeds=None):
+    """Seeds whose validation data crossval evaluates for an initial condition.
+
+    num_seeds=None takes every seed_<n> directory next to the matching run.
+    """
+    if num_seeds is not None:
+        return range(num_seeds)
+    first = get_val_data_path(dir_name, ic_name=ic_name, seed=0)
+    if first is None or not first.parent.is_dir():
+        return []
+    return sorted(
+        int(p.name.removeprefix("seed_"))
+        for p in first.parent.glob("seed_*")
+        if p.name.removeprefix("seed_").isdigit()
+    )
+
+
+def calculate_mse_crossval(dir_name, ic_eval=None, num_seeds=None):
+    """MSE of the run's models on the validation data of every seed (and initial
+    condition) of the same experiment.
+
+    ic_eval=None evaluates the run's own initial condition, plus pluck and random.
+    """
     cfg = get_config(dir_name)
+    if ic_eval is None:
+        ic_eval = list(dict.fromkeys([cfg.train.ic, "pluck", "random"]))
     output_dir = dir_name
     model_gru, model_rnn, model_ref = load_models_from_dir(dir_name)
     normalization_multiplier_model = get_norms(dir_name)
@@ -273,7 +297,7 @@ def calculate_mse_crossval(dir_name, ic_eval=["pluck", "random"], num_seeds=3):
 
     results = []
     for ic_name in ic_eval:
-        for seed in range(num_seeds):
+        for seed in validation_seeds(dir_name, ic_name, num_seeds):
             # get the validation data
             val_data_dir = get_val_data_path(dir_name, ic_name=ic_name, seed=seed)
             if val_data_dir is None:
