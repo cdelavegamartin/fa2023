@@ -61,6 +61,10 @@ Each model has its own optimiser and learning-rate schedule, and its own initial
 - `train.clip_jointly` clips the concatenated gradients of the run's models together, as in the paper (`pdeparamsweep` sets it); the default `false` clips each model on its own.
   With the log10 loss, the gradient grows as the loss falls, so under joint clipping the model with the lowest loss shrinks the steps of the others.
 
+### Plate initial conditions from the 2D wave solver
+`train.ic=impulse` or `train.ic=impulse_random` start the plate at rest from the initial pressure of the wave2d solver (zero on the boundary, maximum 1), with the random draws of the wave2d dataset: with the same `data.seed`, the plate and the wave2d datasets start from the same fields.
+The wave solver starts with zero particle velocity, so this is the same initial state of the wave equation; the trajectories diverge afterwards through the boundary conditions and the dispersion of the finite differences at high wavenumbers.
+
 ### Full sweep: spectrum and gradient clipping
 `slurm/fullsweep.sbatch` trains 6 datasets x seeds 0–5 x {original, full-spectrum} FourierConv2d x {joint, separate} gradient clipping, as 288 SLURM array tasks, one per line of `slurm/fullsweep_runs.txt`:
 - datasets: the 4 (gamma, kappa) of the paper; the plate solver with the parameters of the 2D wave equation of Parker et al. (gamma = 340, kappa = 0, no damping, mixed initial conditions; the boundary conditions differ); the 2D wave equation of Parker et al. itself (`solver=wave2d`: FTM, 25 modes, 3 channels, half impulses and half random initial conditions) with 40 steps;
