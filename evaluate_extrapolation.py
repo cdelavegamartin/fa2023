@@ -15,6 +15,7 @@ from platefno.util.eval import (
     get_norms,
     get_divergence_rate,
     label_variants,
+    load_extrapolation_data,
     rename_model,
     run_settings,
 )
@@ -22,6 +23,31 @@ from platefno.nn.models import MODEL_NAMES
 from platefno.util.plot import plot_mse_per_timestep,plot_run_output_single_ic
 
 # function 
+
+def extrapolation_data(run_dir, cfg, steps, num_variations):
+    """Normalised extrapolation input and target of a run, as torch tensors.
+
+    Reads data.extrapolation.path when the run has it; older runs simulate the
+    plate with the numpy seed set by the caller, as before.
+    """
+    data = load_extrapolation_data(run_dir, steps, num_variations)
+    if data is None:
+        fs = cfg.domain.sampling_rate
+        solver = LinearPlateSolver(
+            SR=fs,
+            TF=steps / fs,
+            gamma=cfg.solver.gamma,
+            kappa=cfg.solver.kappa,
+            t60=get_t60(cfg),
+            aspect_ratio=cfg.domain.aspect_ratio,
+            Nx=cfg.domain.nx,
+        )
+        norms = get_norms(run_dir).numpy()
+        data = tuple(
+            d * norms for d in create_dataset(cfg, solver, num_variations=num_variations)
+        )
+    return tuple(torch.from_numpy(np.ascontiguousarray(d)) for d in data)
+
 
 # function to evaluate a single run but on an arbitrary number of steps
 def evaluate_run_extrapolation(dir_name, steps=100, num_variations=10, seed=0):
@@ -37,35 +63,9 @@ def evaluate_run_extrapolation(dir_name, steps=100, num_variations=10, seed=0):
     torch.manual_seed(seed)
     np.random.seed(seed)
 
-    # Solver and domain parameters
-    fs = cfg.domain.sampling_rate
-    dur = steps / fs
-    print(f"Simulation duration: {dur}")
-    t60 = get_t60(cfg)
-
-    #######################################################################################################################
-    # The solver is used to generate the training data
-    solver = LinearPlateSolver(
-        SR=fs,
-        TF=dur,
-        gamma=cfg.solver.gamma,
-        kappa=cfg.solver.kappa,
-        t60=t60,
-        aspect_ratio=cfg.domain.aspect_ratio,
-        Nx=cfg.domain.nx,
+    model_input, ground_truth_output = extrapolation_data(
+        dir_name, cfg, steps, num_variations
     )
-    # Last dimension is for the 2 channels (displacement, velocity)
-    model_input, ground_truth_output = create_dataset(cfg, solver, num_variations=num_variations)
-    # Save model input as numpy array
-    np.save(os.path.join(dir_name, f"model_input_{steps}.npy"), model_input)
-    model_input = torch.from_numpy(model_input)
-    ground_truth_output = torch.from_numpy(ground_truth_output)
-
-    # Load saved normalization_multiplier
-    normalization_multiplier_saved = get_norms(dir_name)
-
-    model_input *= normalization_multiplier_saved
-    ground_truth_output *= normalization_multiplier_saved
 
     # Move data to device
     model_input = model_input.to(device)
@@ -131,35 +131,9 @@ def evaluate_run_extrapolation_divergence(dir_name, steps=100, num_variations=10
     torch.manual_seed(seed)
     np.random.seed(seed)
 
-    # Solver and domain parameters
-    fs = cfg.domain.sampling_rate
-    dur = steps / fs
-    print(f"Simulation duration: {dur}")
-    t60 = get_t60(cfg)
-
-    #######################################################################################################################
-    # The solver is used to generate the training data
-    solver = LinearPlateSolver(
-        SR=fs,
-        TF=dur,
-        gamma=cfg.solver.gamma,
-        kappa=cfg.solver.kappa,
-        t60=t60,
-        aspect_ratio=cfg.domain.aspect_ratio,
-        Nx=cfg.domain.nx,
+    model_input, ground_truth_output = extrapolation_data(
+        dir_name, cfg, steps, num_variations
     )
-    # Last dimension is for the 2 channels (displacement, velocity)
-    model_input, ground_truth_output = create_dataset(cfg, solver, num_variations=num_variations)
-    # Save model input as numpy array
-    np.save(os.path.join(dir_name, f"model_input_{steps}.npy"), model_input)
-    model_input = torch.from_numpy(model_input)
-    ground_truth_output = torch.from_numpy(ground_truth_output)
-
-    # Load saved normalization_multiplier
-    normalization_multiplier_saved = get_norms(dir_name)
-
-    model_input *= normalization_multiplier_saved
-    ground_truth_output *= normalization_multiplier_saved
 
     # Move data to device
     model_input = model_input.to(device)
@@ -225,36 +199,9 @@ def plot_combined_extrapolation(dir_name, steps=100, num_variations=10, seed=0, 
         torch.manual_seed(seed)
         np.random.seed(seed)
 
-        # Solver and domain parameters
-        fs = cfg.domain.sampling_rate
-        dur = steps / fs
-        print(f"Simulation duration: {dur}")
-        t60 = get_t60(cfg)
-
-        #######################################################################################################################
-        # The solver is used to generate the training data
-        solver = LinearPlateSolver(
-            SR=fs,
-            TF=dur,
-            gamma=cfg.solver.gamma,
-            kappa=cfg.solver.kappa,
-            t60=t60,
-            aspect_ratio=cfg.domain.aspect_ratio,
-            Nx=cfg.domain.nx,
+        model_input, ground_truth_output = extrapolation_data(
+            run_dir, cfg, steps, num_variations
         )
-        # Last dimension is for the 2 channels (displacement, velocity)
-        model_input, ground_truth_output = create_dataset(cfg, solver, num_variations=num_variations)
-
-        # Print shape of ground truth output
-        print(f"Ground truth output shape: {ground_truth_output.shape}")
-        
-        model_input = torch.from_numpy(model_input)
-        ground_truth_output = torch.from_numpy(ground_truth_output)
-        # Load saved normalization_multiplier
-        normalization_multiplier_saved = get_norms(run_dir)
-
-        model_input *= normalization_multiplier_saved
-        ground_truth_output *= normalization_multiplier_saved
 
         # Move data to device
         model_input = model_input.to(device)
@@ -394,29 +341,36 @@ if __name__ == "__main__":
     timer_start = time.time()
     print(len(get_run_dirs(dir_name)))
 
-    # loop over all the runs in the directory
-    df_total = pd.DataFrame()
-    for run_dir in get_run_dirs(dir_name):
-        cfg = get_config(run_dir)
-        # only evaluate if the run is for plucks
-        if cfg.train.ic == "pluck":
-            print(run_dir)
-            df_run = evaluate_run_extrapolation_divergence(run_dir, steps=2000, num_variations=30, seed=5)
-            df_total = pd.concat(
-            [df_total,df_run],
-            axis=0,
-        )
+    # Divergence of every run over the extrapolation length of the paper
+    run_dirs = get_run_dirs(dir_name)
+    df_total = pd.concat(
+        [
+            evaluate_run_extrapolation_divergence(
+                run_dir, steps=2000, num_variations=30, seed=5
+            )
+            for run_dir in run_dirs
+        ],
+        axis=0,
+    )
     df_total.reset_index(drop=True, inplace=True)
     df_total.to_feather(os.path.join(dir_name, "divergence.feather"))
-    create_latex_table_div_single_ic(df_total, ic="pluck", file="div_rate.tex")
+    for ic in df_total["ic_train"].unique():
+        create_latex_table_div_single_ic(
+            df_total, ic=ic, file=os.path.join(dir_name, f"div_rate_{ic}.tex")
+        )
 
-
-    # Plot the extrapolation results aggregated for each combination of gamma and kappa
-    
-    list_cases_dirs = [f.path for f in os.scandir(dir_name) if f.is_dir()]
-    for case_dir in list_cases_dirs:
-        for highlight_run in [2,4,8]:
-            plot_combined_extrapolation(os.path.join(case_dir, "ic_pluck"), steps=2000, num_variations=30, seed=5, highlight_run=(0, highlight_run),linestyles = ["solid", "dashed", "dotted"])
+    # Extrapolation MSE of the runs of each directory that holds seed_<n> runs
+    # (a (gamma, kappa) case in pdeparamsweep, a run variant in fullspectrumsweep)
+    for group_dir in sorted({os.path.dirname(run_dir) for run_dir in run_dirs}):
+        for highlight_run in [2, 4, 8]:
+            plot_combined_extrapolation(
+                group_dir,
+                steps=2000,
+                num_variations=30,
+                seed=5,
+                highlight_run=(0, highlight_run),
+                linestyles=["solid", "dashed", "dotted"],
+            )
 
     timer_end = time.time()
     print(f"Time elapsed: {timer_end - timer_start}")
