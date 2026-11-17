@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 from hydra import compose, initialize_config_dir
 
-from platefno.data import channel_stats, simulate, split, standardize
+from platefno.data import channel_stats, grid_size, simulate, split, standardize
 
 CONF_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "conf")
 
@@ -41,3 +41,18 @@ def test_standardize_per_channel():
     assert np.allclose(out.mean(axis=(0, 1, 2, 3)), 0, atol=1e-5)
     assert np.allclose(out.std(axis=(0, 1, 2, 3)), 1, atol=1e-5)
     assert np.allclose(standardize(data, [0, 0], std).numpy(), data / std, atol=1e-6)
+
+
+def test_wave2d_dataset():
+    cfg = config("solver=wave2d", "train.ic=impulse_random")
+    data = simulate(cfg)
+    assert data.shape == (4, 3, 40, 38, 3)
+    assert cfg.data.name == "wave2d_ftm"
+    assert grid_size(cfg) == (40, 38)
+
+
+def test_output_root_follows_environment(monkeypatch):
+    monkeypatch.setenv("FA2023_OUTPUT", "/scratch/user/fa2023")
+    assert config().data.path.startswith("/scratch/user/fa2023/datasets/")
+    monkeypatch.delenv("FA2023_OUTPUT")
+    assert config().data.path.startswith("output/datasets/")

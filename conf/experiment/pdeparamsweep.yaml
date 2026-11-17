@@ -1,7 +1,7 @@
 # @package _global_
 hydra:
   sweep:
-    dir: output/pdeparamsweep/gamma_${solver.gamma}-kappa_${solver.kappa}/ic_${train.ic}/
+    dir: ${paths.output}/pdeparamsweep/gamma_${solver.gamma}-kappa_${solver.kappa}/ic_${train.ic}/
     subdir: seed_${train.random_seed}
   sweeper:
     params:

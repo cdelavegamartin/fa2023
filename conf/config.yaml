@@ -4,9 +4,14 @@ defaults:
   - override hydra/launcher: joblib
   - _self_
 
+# Root of every output (runs, datasets): the FA2023_OUTPUT environment variable if
+# set, e.g. a scratch directory on a cluster, otherwise output/ in the working directory
+paths:
+  output: ${oc.env:FA2023_OUTPUT,output}
+
 hydra:
   run:
-    dir: output/${hydra.job.name}/${now:%Y-%m-%d_%H-%M-%S}
+    dir: ${paths.output}/${hydra.job.name}/${now:%Y-%m-%d_%H-%M-%S}
   job:
     chdir: True
 
@@ -24,7 +29,7 @@ domain:
 data:
   name: ${solver.dataset_name}
   seed: 0
-  path: output/datasets/${data.name}/ic_${train.ic}-n_${train.num_variations}-steps_${train.num_steps_train}-seed_${data.seed}.npy
+  path: ${paths.output}/datasets/${data.name}/ic_${train.ic}-n_${train.num_variations}-steps_${train.num_steps_train}-seed_${data.seed}.npy
   mean: null
   std: null
   # Extrapolation dataset of the same configuration (fewer, longer trajectories, as
@@ -34,7 +39,7 @@ data:
     num_variations: 30
     num_steps: 2000
     seed: 5
-    path: output/datasets/${data.name}/ic_${train.ic}-n_${data.extrapolation.num_variations}-steps_${data.extrapolation.num_steps}-seed_${data.extrapolation.seed}.npy
+    path: ${paths.output}/datasets/${data.name}/ic_${train.ic}-n_${data.extrapolation.num_variations}-steps_${data.extrapolation.num_steps}-seed_${data.extrapolation.seed}.npy
 
 train:
   device: cuda

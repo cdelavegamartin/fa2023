@@ -1,7 +1,7 @@
 # @package _global_
 hydra:
   sweep:
-    dir: output/testrun/${now:%Y-%m-%d_%H-%M-%S}
+    dir: ${paths.output}/testrun/${now:%Y-%m-%d_%H-%M-%S}
     subdir: seed_${train.random_seed}
   sweeper:
     params:

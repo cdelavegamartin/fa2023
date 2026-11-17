@@ -6,7 +6,7 @@
 # one model per job ('train.models=[gru]' etc.); those jobs share the run directory.
 hydra:
   sweep:
-    dir: output/fullspectrumsweep/${data.name}/ic_${train.ic}/full_spectrum_${nnarch.full_spectrum}-clip_jointly_${train.clip_jointly}
+    dir: ${paths.output}/fullspectrumsweep/${data.name}/ic_${train.ic}/full_spectrum_${nnarch.full_spectrum}-clip_jointly_${train.clip_jointly}
     subdir: seed_${train.random_seed}
   sweeper:
     params:
