@@ -4,6 +4,10 @@ Code for the paper Physical Modelling of Stiff Membrane Vibration Using Neural N
 ## Reproducing the results
 GPU needed, might need to adjust batch size depending on GPU RAM
 
+### Output location
+Runs and datasets go under `paths.output`: the `FA2023_OUTPUT` environment variable if set (e.g. a scratch directory on a cluster), otherwise `output/` in the working directory.
+The commands below use `output/`; with `FA2023_OUTPUT` set, use `$FA2023_OUTPUT` instead.
+
 ### Create the environment
 The project uses [uv](https://docs.astral.sh/uv/); an extra selects the PyTorch backend:
 ```uv sync --extra cu126```  CUDA 12.6 PyTorch (NVIDIA driver R525 or newer)
@@ -59,19 +63,20 @@ Each model has its own optimiser and learning-rate schedule, and its own initial
 
 ### Full sweep: spectrum and gradient clipping
 `slurm/fullsweep.sbatch` trains 6 datasets x seeds 0–5 x {original, full-spectrum} FourierConv2d x {joint, separate} gradient clipping, as 288 SLURM array tasks, one per line of `slurm/fullsweep_runs.txt`:
-- datasets: the 4 (gamma, kappa) of the paper; the plate solver with the parameters of the 2D wave equation of Parker et al. (gamma = 340, kappa = 0, no damping, mixed initial conditions; the boundary conditions differ); the original 2D wave equation (FTM, 3 channels) from DAFX22_FNO with 40 steps;
+- datasets: the 4 (gamma, kappa) of the paper; the plate solver with the parameters of the 2D wave equation of Parker et al. (gamma = 340, kappa = 0, no damping, mixed initial conditions; the boundary conditions differ); the 2D wave equation of Parker et al. itself (`solver=wave2d`: FTM, 25 modes, 3 channels, half impulses and half random initial conditions) with 40 steps;
 - joint clipping trains FGRU, FRNN and REF in one task; separate clipping trains one model per task, and the three tasks share the run directory;
-- runs go to `output/fullspectrumsweep/<data.name>/ic_<ic>/full_spectrum_<bool>-clip_jointly_<bool>/seed_<n>`.
+- runs go to `$FA2023_OUTPUT/fullspectrumsweep/<data.name>/ic_<ic>/full_spectrum_<bool>-clip_jointly_<bool>/seed_<n>`.
 
 `slurm/make_run_list.py` writes the run list and `slurm/fullsweep_datasets.txt`; it checks that every line fixes every swept setting of `conf/experiment/fullspectrumsweep.yaml`.
 
 From the repository root, after `uv sync --extra cu126`:
 ```bash
-bash slurm/generate_datasets.sh <DAFX22_FNO checkout>   # training and extrapolation datasets, CPU
+export FA2023_OUTPUT=/path/to/scratch/fa2023              # also seen by the SLURM jobs
+bash slurm/generate_datasets.sh                           # 12 datasets, ~8 GB, CPU, ~15 min
 sbatch slurm/fullsweep.sbatch                             # all 288 tasks
 sbatch -a 1-4 slurm/fullsweep.sbatch train.epochs=1       # quick check of the first run
-uv run python validate_2d_plate.py output/fullspectrumsweep
-uv run python evaluate_extrapolation.py output/fullspectrumsweep
+uv run python validate_2d_plate.py $FA2023_OUTPUT/fullspectrumsweep
+uv run python evaluate_extrapolation.py $FA2023_OUTPUT/fullspectrumsweep
 ```
 Arguments after the script name go to `train_2d_plate.py`; `-a 1-288%40` limits the number of simultaneous tasks.
 The result tables report the first two channels (displacement and velocity; pressure and x-velocity for the FTM dataset).
