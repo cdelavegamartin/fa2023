@@ -1,0 +1,288 @@
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=0 nnarch.full_spectrum=false train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=0 nnarch.full_spectrum=false train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=0 nnarch.full_spectrum=false train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=0 nnarch.full_spectrum=false train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=0 nnarch.full_spectrum=true train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=0 nnarch.full_spectrum=true train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=0 nnarch.full_spectrum=true train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=0 nnarch.full_spectrum=true train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=1 nnarch.full_spectrum=false train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=1 nnarch.full_spectrum=false train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=1 nnarch.full_spectrum=false train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=1 nnarch.full_spectrum=false train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=1 nnarch.full_spectrum=true train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=1 nnarch.full_spectrum=true train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=1 nnarch.full_spectrum=true train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=1 nnarch.full_spectrum=true train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=2 nnarch.full_spectrum=false train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=2 nnarch.full_spectrum=false train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=2 nnarch.full_spectrum=false train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=2 nnarch.full_spectrum=false train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=2 nnarch.full_spectrum=true train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=2 nnarch.full_spectrum=true train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=2 nnarch.full_spectrum=true train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=2 nnarch.full_spectrum=true train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=3 nnarch.full_spectrum=false train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=3 nnarch.full_spectrum=false train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=3 nnarch.full_spectrum=false train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=3 nnarch.full_spectrum=false train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=3 nnarch.full_spectrum=true train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=3 nnarch.full_spectrum=true train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=3 nnarch.full_spectrum=true train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=3 nnarch.full_spectrum=true train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=4 nnarch.full_spectrum=false train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=4 nnarch.full_spectrum=false train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=4 nnarch.full_spectrum=false train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=4 nnarch.full_spectrum=false train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=4 nnarch.full_spectrum=true train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=4 nnarch.full_spectrum=true train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=4 nnarch.full_spectrum=true train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=4 nnarch.full_spectrum=true train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=5 nnarch.full_spectrum=false train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=5 nnarch.full_spectrum=false train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=5 nnarch.full_spectrum=false train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=5 nnarch.full_spectrum=false train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=5 nnarch.full_spectrum=true train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=5 nnarch.full_spectrum=true train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=5 nnarch.full_spectrum=true train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1 train.random_seed=5 nnarch.full_spectrum=true train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=0 nnarch.full_spectrum=false train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=0 nnarch.full_spectrum=false train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=0 nnarch.full_spectrum=false train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=0 nnarch.full_spectrum=false train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=0 nnarch.full_spectrum=true train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=0 nnarch.full_spectrum=true train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=0 nnarch.full_spectrum=true train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=0 nnarch.full_spectrum=true train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=1 nnarch.full_spectrum=false train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=1 nnarch.full_spectrum=false train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=1 nnarch.full_spectrum=false train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=1 nnarch.full_spectrum=false train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=1 nnarch.full_spectrum=true train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=1 nnarch.full_spectrum=true train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=1 nnarch.full_spectrum=true train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=1 nnarch.full_spectrum=true train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=2 nnarch.full_spectrum=false train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=2 nnarch.full_spectrum=false train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=2 nnarch.full_spectrum=false train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=2 nnarch.full_spectrum=false train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=2 nnarch.full_spectrum=true train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=2 nnarch.full_spectrum=true train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=2 nnarch.full_spectrum=true train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=2 nnarch.full_spectrum=true train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=3 nnarch.full_spectrum=false train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=3 nnarch.full_spectrum=false train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=3 nnarch.full_spectrum=false train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=3 nnarch.full_spectrum=false train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=3 nnarch.full_spectrum=true train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=3 nnarch.full_spectrum=true train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=3 nnarch.full_spectrum=true train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=3 nnarch.full_spectrum=true train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=4 nnarch.full_spectrum=false train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=4 nnarch.full_spectrum=false train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=4 nnarch.full_spectrum=false train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=4 nnarch.full_spectrum=false train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=4 nnarch.full_spectrum=true train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=4 nnarch.full_spectrum=true train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=4 nnarch.full_spectrum=true train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=4 nnarch.full_spectrum=true train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=5 nnarch.full_spectrum=false train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=5 nnarch.full_spectrum=false train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=5 nnarch.full_spectrum=false train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=5 nnarch.full_spectrum=false train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=5 nnarch.full_spectrum=true train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=5 nnarch.full_spectrum=true train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=5 nnarch.full_spectrum=true train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0 train.random_seed=5 nnarch.full_spectrum=true train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=0 nnarch.full_spectrum=false train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=0 nnarch.full_spectrum=false train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=0 nnarch.full_spectrum=false train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=0 nnarch.full_spectrum=false train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=0 nnarch.full_spectrum=true train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=0 nnarch.full_spectrum=true train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=0 nnarch.full_spectrum=true train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=0 nnarch.full_spectrum=true train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=1 nnarch.full_spectrum=false train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=1 nnarch.full_spectrum=false train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=1 nnarch.full_spectrum=false train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=1 nnarch.full_spectrum=false train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=1 nnarch.full_spectrum=true train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=1 nnarch.full_spectrum=true train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=1 nnarch.full_spectrum=true train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=1 nnarch.full_spectrum=true train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=2 nnarch.full_spectrum=false train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=2 nnarch.full_spectrum=false train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=2 nnarch.full_spectrum=false train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=2 nnarch.full_spectrum=false train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=2 nnarch.full_spectrum=true train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=2 nnarch.full_spectrum=true train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=2 nnarch.full_spectrum=true train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=2 nnarch.full_spectrum=true train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=3 nnarch.full_spectrum=false train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=3 nnarch.full_spectrum=false train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=3 nnarch.full_spectrum=false train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=3 nnarch.full_spectrum=false train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=3 nnarch.full_spectrum=true train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=3 nnarch.full_spectrum=true train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=3 nnarch.full_spectrum=true train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=3 nnarch.full_spectrum=true train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=4 nnarch.full_spectrum=false train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=4 nnarch.full_spectrum=false train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=4 nnarch.full_spectrum=false train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=4 nnarch.full_spectrum=false train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=4 nnarch.full_spectrum=true train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=4 nnarch.full_spectrum=true train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=4 nnarch.full_spectrum=true train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=4 nnarch.full_spectrum=true train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=5 nnarch.full_spectrum=false train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=5 nnarch.full_spectrum=false train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=5 nnarch.full_spectrum=false train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=5 nnarch.full_spectrum=false train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=5 nnarch.full_spectrum=true train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=5 nnarch.full_spectrum=true train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=5 nnarch.full_spectrum=true train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1 train.random_seed=5 nnarch.full_spectrum=true train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=0 nnarch.full_spectrum=false train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=0 nnarch.full_spectrum=false train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=0 nnarch.full_spectrum=false train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=0 nnarch.full_spectrum=false train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=0 nnarch.full_spectrum=true train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=0 nnarch.full_spectrum=true train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=0 nnarch.full_spectrum=true train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=0 nnarch.full_spectrum=true train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=1 nnarch.full_spectrum=false train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=1 nnarch.full_spectrum=false train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=1 nnarch.full_spectrum=false train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=1 nnarch.full_spectrum=false train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=1 nnarch.full_spectrum=true train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=1 nnarch.full_spectrum=true train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=1 nnarch.full_spectrum=true train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=1 nnarch.full_spectrum=true train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=2 nnarch.full_spectrum=false train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=2 nnarch.full_spectrum=false train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=2 nnarch.full_spectrum=false train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=2 nnarch.full_spectrum=false train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=2 nnarch.full_spectrum=true train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=2 nnarch.full_spectrum=true train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=2 nnarch.full_spectrum=true train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=2 nnarch.full_spectrum=true train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=3 nnarch.full_spectrum=false train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=3 nnarch.full_spectrum=false train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=3 nnarch.full_spectrum=false train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=3 nnarch.full_spectrum=false train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=3 nnarch.full_spectrum=true train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=3 nnarch.full_spectrum=true train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=3 nnarch.full_spectrum=true train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=3 nnarch.full_spectrum=true train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=4 nnarch.full_spectrum=false train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=4 nnarch.full_spectrum=false train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=4 nnarch.full_spectrum=false train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=4 nnarch.full_spectrum=false train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=4 nnarch.full_spectrum=true train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=4 nnarch.full_spectrum=true train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=4 nnarch.full_spectrum=true train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=4 nnarch.full_spectrum=true train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=5 nnarch.full_spectrum=false train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=5 nnarch.full_spectrum=false train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=5 nnarch.full_spectrum=false train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=5 nnarch.full_spectrum=false train.clip_jointly=false train.models=[ref]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=5 nnarch.full_spectrum=true train.clip_jointly=true
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=5 nnarch.full_spectrum=true train.clip_jointly=false train.models=[gru]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=5 nnarch.full_spectrum=true train.clip_jointly=false train.models=[rnn]
+solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0 train.random_seed=5 nnarch.full_spectrum=true train.clip_jointly=false train.models=[ref]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=0 nnarch.full_spectrum=false train.clip_jointly=true
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=0 nnarch.full_spectrum=false train.clip_jointly=false train.models=[gru]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=0 nnarch.full_spectrum=false train.clip_jointly=false train.models=[rnn]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=0 nnarch.full_spectrum=false train.clip_jointly=false train.models=[ref]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=0 nnarch.full_spectrum=true train.clip_jointly=true
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=0 nnarch.full_spectrum=true train.clip_jointly=false train.models=[gru]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=0 nnarch.full_spectrum=true train.clip_jointly=false train.models=[rnn]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=0 nnarch.full_spectrum=true train.clip_jointly=false train.models=[ref]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=1 nnarch.full_spectrum=false train.clip_jointly=true
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=1 nnarch.full_spectrum=false train.clip_jointly=false train.models=[gru]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=1 nnarch.full_spectrum=false train.clip_jointly=false train.models=[rnn]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=1 nnarch.full_spectrum=false train.clip_jointly=false train.models=[ref]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=1 nnarch.full_spectrum=true train.clip_jointly=true
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=1 nnarch.full_spectrum=true train.clip_jointly=false train.models=[gru]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=1 nnarch.full_spectrum=true train.clip_jointly=false train.models=[rnn]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=1 nnarch.full_spectrum=true train.clip_jointly=false train.models=[ref]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=2 nnarch.full_spectrum=false train.clip_jointly=true
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=2 nnarch.full_spectrum=false train.clip_jointly=false train.models=[gru]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=2 nnarch.full_spectrum=false train.clip_jointly=false train.models=[rnn]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=2 nnarch.full_spectrum=false train.clip_jointly=false train.models=[ref]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=2 nnarch.full_spectrum=true train.clip_jointly=true
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=2 nnarch.full_spectrum=true train.clip_jointly=false train.models=[gru]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=2 nnarch.full_spectrum=true train.clip_jointly=false train.models=[rnn]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=2 nnarch.full_spectrum=true train.clip_jointly=false train.models=[ref]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=3 nnarch.full_spectrum=false train.clip_jointly=true
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=3 nnarch.full_spectrum=false train.clip_jointly=false train.models=[gru]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=3 nnarch.full_spectrum=false train.clip_jointly=false train.models=[rnn]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=3 nnarch.full_spectrum=false train.clip_jointly=false train.models=[ref]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=3 nnarch.full_spectrum=true train.clip_jointly=true
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=3 nnarch.full_spectrum=true train.clip_jointly=false train.models=[gru]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=3 nnarch.full_spectrum=true train.clip_jointly=false train.models=[rnn]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=3 nnarch.full_spectrum=true train.clip_jointly=false train.models=[ref]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=4 nnarch.full_spectrum=false train.clip_jointly=true
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=4 nnarch.full_spectrum=false train.clip_jointly=false train.models=[gru]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=4 nnarch.full_spectrum=false train.clip_jointly=false train.models=[rnn]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=4 nnarch.full_spectrum=false train.clip_jointly=false train.models=[ref]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=4 nnarch.full_spectrum=true train.clip_jointly=true
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=4 nnarch.full_spectrum=true train.clip_jointly=false train.models=[gru]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=4 nnarch.full_spectrum=true train.clip_jointly=false train.models=[rnn]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=4 nnarch.full_spectrum=true train.clip_jointly=false train.models=[ref]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=5 nnarch.full_spectrum=false train.clip_jointly=true
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=5 nnarch.full_spectrum=false train.clip_jointly=false train.models=[gru]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=5 nnarch.full_spectrum=false train.clip_jointly=false train.models=[rnn]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=5 nnarch.full_spectrum=false train.clip_jointly=false train.models=[ref]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=5 nnarch.full_spectrum=true train.clip_jointly=true
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=5 nnarch.full_spectrum=true train.clip_jointly=false train.models=[gru]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=5 nnarch.full_spectrum=true train.clip_jointly=false train.models=[rnn]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix train.random_seed=5 nnarch.full_spectrum=true train.clip_jointly=false train.models=[ref]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=0 nnarch.full_spectrum=false train.clip_jointly=true
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=0 nnarch.full_spectrum=false train.clip_jointly=false train.models=[gru]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=0 nnarch.full_spectrum=false train.clip_jointly=false train.models=[rnn]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=0 nnarch.full_spectrum=false train.clip_jointly=false train.models=[ref]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=0 nnarch.full_spectrum=true train.clip_jointly=true
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=0 nnarch.full_spectrum=true train.clip_jointly=false train.models=[gru]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=0 nnarch.full_spectrum=true train.clip_jointly=false train.models=[rnn]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=0 nnarch.full_spectrum=true train.clip_jointly=false train.models=[ref]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=1 nnarch.full_spectrum=false train.clip_jointly=true
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=1 nnarch.full_spectrum=false train.clip_jointly=false train.models=[gru]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=1 nnarch.full_spectrum=false train.clip_jointly=false train.models=[rnn]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=1 nnarch.full_spectrum=false train.clip_jointly=false train.models=[ref]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=1 nnarch.full_spectrum=true train.clip_jointly=true
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=1 nnarch.full_spectrum=true train.clip_jointly=false train.models=[gru]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=1 nnarch.full_spectrum=true train.clip_jointly=false train.models=[rnn]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=1 nnarch.full_spectrum=true train.clip_jointly=false train.models=[ref]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=2 nnarch.full_spectrum=false train.clip_jointly=true
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=2 nnarch.full_spectrum=false train.clip_jointly=false train.models=[gru]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=2 nnarch.full_spectrum=false train.clip_jointly=false train.models=[rnn]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=2 nnarch.full_spectrum=false train.clip_jointly=false train.models=[ref]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=2 nnarch.full_spectrum=true train.clip_jointly=true
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=2 nnarch.full_spectrum=true train.clip_jointly=false train.models=[gru]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=2 nnarch.full_spectrum=true train.clip_jointly=false train.models=[rnn]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=2 nnarch.full_spectrum=true train.clip_jointly=false train.models=[ref]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=3 nnarch.full_spectrum=false train.clip_jointly=true
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=3 nnarch.full_spectrum=false train.clip_jointly=false train.models=[gru]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=3 nnarch.full_spectrum=false train.clip_jointly=false train.models=[rnn]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=3 nnarch.full_spectrum=false train.clip_jointly=false train.models=[ref]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=3 nnarch.full_spectrum=true train.clip_jointly=true
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=3 nnarch.full_spectrum=true train.clip_jointly=false train.models=[gru]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=3 nnarch.full_spectrum=true train.clip_jointly=false train.models=[rnn]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=3 nnarch.full_spectrum=true train.clip_jointly=false train.models=[ref]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=4 nnarch.full_spectrum=false train.clip_jointly=true
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=4 nnarch.full_spectrum=false train.clip_jointly=false train.models=[gru]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=4 nnarch.full_spectrum=false train.clip_jointly=false train.models=[rnn]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=4 nnarch.full_spectrum=false train.clip_jointly=false train.models=[ref]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=4 nnarch.full_spectrum=true train.clip_jointly=true
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=4 nnarch.full_spectrum=true train.clip_jointly=false train.models=[gru]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=4 nnarch.full_spectrum=true train.clip_jointly=false train.models=[rnn]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=4 nnarch.full_spectrum=true train.clip_jointly=false train.models=[ref]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=5 nnarch.full_spectrum=false train.clip_jointly=true
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=5 nnarch.full_spectrum=false train.clip_jointly=false train.models=[gru]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=5 nnarch.full_spectrum=false train.clip_jointly=false train.models=[rnn]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=5 nnarch.full_spectrum=false train.clip_jointly=false train.models=[ref]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=5 nnarch.full_spectrum=true train.clip_jointly=true
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=5 nnarch.full_spectrum=true train.clip_jointly=false train.models=[gru]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=5 nnarch.full_spectrum=true train.clip_jointly=false train.models=[rnn]
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=impulse_random data.name=wave2d_ftm solver.num_state_variables=3 train.random_seed=5 nnarch.full_spectrum=true train.clip_jointly=false train.models=[ref]
