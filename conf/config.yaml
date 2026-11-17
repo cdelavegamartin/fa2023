@@ -4,9 +4,14 @@ defaults:
   - override hydra/launcher: joblib
   - _self_
 
+# Root of every output (runs, datasets): the FA2023_OUTPUT environment variable if
+# set, e.g. a scratch directory on a cluster, otherwise output/ in the working directory
+paths:
+  output: ${oc.env:FA2023_OUTPUT,output}
+
 hydra:
   run:
-    dir: output/${hydra.job.name}/${now:%Y-%m-%d_%H-%M-%S}
+    dir: ${paths.output}/${hydra.job.name}/${now:%Y-%m-%d_%H-%M-%S}
   job:
     chdir: True
 
@@ -18,10 +23,23 @@ domain:
 # Dataset: one raw .npy array (trajectories, time steps, x, y, channels) made by
 # generate_dataset.py. Training standardises it as (data - mean) / std per channel;
 # mean null means 0 (scale only), std null means the std of the training split.
+# data.name labels the dataset in output paths and result tables.
+# data.seed sets the dataset's random initial conditions and the order of the
+# training batches; train.random_seed only sets the models' initial weights.
 data:
-  path: output/datasets/gamma_${solver.gamma}-kappa_${solver.kappa}-damping_${solver.damping.name}/ic_${train.ic}-n_${train.num_variations}-steps_${train.num_steps_train}-seed_${train.random_seed}.npy
+  name: ${solver.dataset_name}
+  seed: 0
+  path: ${paths.output}/datasets/${data.name}/ic_${train.ic}-n_${train.num_variations}-steps_${train.num_steps_train}-seed_${data.seed}.npy
   mean: null
   std: null
+  # Extrapolation dataset of the same configuration (fewer, longer trajectories, as
+  # in the paper), read by evaluate_extrapolation.py; generate it with
+  # generate_dataset.py train.num_variations=30 train.num_steps_train=2000 data.seed=5
+  extrapolation:
+    num_variations: 30
+    num_steps: 2000
+    seed: 5
+    path: ${paths.output}/datasets/${data.name}/ic_${train.ic}-n_${data.extrapolation.num_variations}-steps_${data.extrapolation.num_steps}-seed_${data.extrapolation.seed}.npy
 
 train:
   device: cuda

@@ -1,10 +1,12 @@
 # @package _global_
-# Same sweep as pdeparamsweep, with and without the full-spectrum FourierConv2d
-# (phd-thesis#85). Seed 0 only for now; add 1,2 to train.random_seed for all seeds.
-# Both full_spectrum values of a (gamma, kappa, seed) use the same data.path.
+# Original vs full-spectrum FourierConv2d (phd-thesis#85) and joint vs separate
+# gradient clipping. The dataset comes from the solver overrides of each run (see
+# slurm/fullsweep_runs.txt); train.random_seed only sets the initial weights, so all
+# seeds of a dataset use the same data.path. Runs with separate clipping MAY train
+# one model per job ('train.models=[gru]' etc.); those jobs share the run directory.
 hydra:
   sweep:
-    dir: output/fullspectrumsweep/gamma_${solver.gamma}-kappa_${solver.kappa}/ic_${train.ic}/full_spectrum_${nnarch.full_spectrum}
+    dir: ${paths.output}/fullspectrumsweep/${data.name}/ic_${train.ic}/full_spectrum_${nnarch.full_spectrum}-clip_jointly_${train.clip_jointly}
     subdir: seed_${train.random_seed}
   sweeper:
     params:
@@ -12,11 +14,9 @@ hydra:
       train.batch_size: 400
       train.num_variations: 1024
       train.num_steps_train: 40
-      train.ic: pluck
-      train.random_seed: 0
-      solver.gamma: 1.0, 100.0
-      solver.kappa: 0.1, 1.0
+      train.random_seed: 0, 1, 2, 3, 4, 5
       nnarch.full_spectrum: false, true
+      train.clip_jointly: true, false
 
   launcher:
     n_jobs: 1

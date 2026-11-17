@@ -1,7 +1,13 @@
 import pandas as pd
 from omegaconf import OmegaConf
 
-from platefno.util.eval import label_variants, run_settings
+from platefno.util.eval import (
+    format_parameter,
+    label_variants,
+    run_settings,
+    validation_seeds,
+    with_variant_columns,
+)
 from validate_2d_plate import create_latex_table_val_results_single_ic
 
 
@@ -21,6 +27,28 @@ def test_run_settings_defaults_for_old_configs():
     assert settings["clip_jointly"] is True
 
 
+def test_run_settings_dataset_name():
+    assert run_settings(config())["dataset"] == "gamma_100.0-kappa_0.1"
+    cfg = config()
+    cfg.data = {"name": "wave2d_ftm"}
+    assert run_settings(cfg)["dataset"] == "wave2d_ftm"
+
+
+def test_old_rows_get_a_dataset_name():
+    df = pd.DataFrame(rows(False)).drop(columns=["dataset"])
+    assert set(with_variant_columns(df)["dataset"]) == {"gamma_100.0-kappa_0.1"}
+
+
+def test_validation_seeds_lists_sibling_seed_directories(tmp_path):
+    variant = tmp_path / "ic_pluck" / "full_spectrum_False-clip_jointly_False"
+    for seed in (0, 1, 5):
+        (variant / f"seed_{seed}").mkdir(parents=True)
+    run = variant / "seed_1"
+    assert validation_seeds(str(run), "pluck") == [0, 1, 5]
+    assert validation_seeds(str(run), "random") == []
+    assert list(validation_seeds(str(run), "pluck", num_seeds=2)) == [0, 1]
+
+
 def test_run_settings_reads_new_options():
     settings = run_settings(
         config({"full_spectrum": True}, {"clip_jointly": False})
@@ -33,6 +61,7 @@ def rows(full_spectrum, clip_jointly=False, mse=1.0):
     return [
         {
             "model": model,
+            "dataset": "gamma_100.0-kappa_0.1",
             "gamma": 100.0,
             "kappa": 0.1,
             "ic_train": "pluck",
@@ -74,6 +103,23 @@ def test_table_keeps_variants_apart(tmp_path):
     )
     assert len(table) == 6
     models = table.index.get_level_values("Model")
-    assert table.loc[("100.0", "0.1", "FGRU")]["Displacement"].iloc[0].startswith("0.5000")
+    row = table.loc[("gamma_100.0-kappa_0.1", "100.0", "0.1", "FGRU")]
+    assert row["Displacement"].iloc[0].startswith("0.5000")
     assert "FGRU, full spectrum" in models
     assert (tmp_path / "val.tex").exists()
+
+
+def test_run_settings_without_plate_parameters():
+    cfg = OmegaConf.create(
+        {
+            "solver": {"name": "wave2d"},
+            "data": {"name": "wave2d_ftm"},
+            "nnarch": {"width": 8},
+            "train": {"ic": "impulse_random", "random_seed": 0},
+        }
+    )
+    settings = run_settings(cfg)
+    assert settings["dataset"] == "wave2d_ftm"
+    assert settings["gamma"] is None and settings["damping"] is None
+    assert format_parameter(settings["gamma"]) == "-"
+    assert format_parameter(100.0) == "100.0"

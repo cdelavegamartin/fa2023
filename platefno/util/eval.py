@@ -4,8 +4,17 @@ import numpy as np
 import pathlib
 import pandas as pd
 from platefno.util.conf import get_config
-from platefno.data import make_solver
+from omegaconf import OmegaConf
+
+from platefno.data import grid_size
 from platefno.nn.models import MODEL_NAMES, build_models
+
+
+def get_device(cfg):
+    """cfg.train.device when it is CUDA and CUDA is available, otherwise the CPU."""
+    if torch.cuda.is_available() and cfg.train.device == "cuda":
+        return torch.device("cuda")
+    return torch.device("cpu")
 
 
 def get_run_dirs(dir_name):
@@ -53,20 +62,16 @@ def load_models_from_dir(dir_name):
 
     output_dir = dir_name
 
-    # Set torch device if posible if not cpu
-    if torch.cuda.is_available() and cfg.train.device == "cuda":
-        device = torch.device(cfg.train.device)
-    else:
-        device = torch.device("cpu")
+    device = get_device(cfg)
 
     torch.manual_seed(cfg.train.random_seed)  # Set seed for reproducibility
     np.random.seed(cfg.train.random_seed)
 
-    solver = make_solver(cfg)  # gives the grid size of the models
+    size_x, size_y = grid_size(cfg)
 
     # Instantiate the models
     model_gru, model_rnn, model_ref = build_models(
-        cfg, solver.Nx, solver.Ny, device
+        cfg, size_x, size_y, device
     ).values()
 
     # Load the models
@@ -96,6 +101,28 @@ def load_data(dir_name):
         np.load(os.path.join(dir_name, "validation", "validation_output.npy"))
     )
     return validation_input, validation_output
+
+
+def load_extrapolation_data(dir_name, steps, num_variations, base_dir="."):
+    """Raw extrapolation input (n, 1, x, y, c) and target (n, steps - 1, x, y, c) of
+    a run, scaled by the run's normalisation, as numpy arrays.
+
+    Reads the first num_variations trajectories and steps time steps of
+    data.extrapolation.path (relative to base_dir); returns None for runs saved
+    before that setting existed, which simulate their data instead.
+    """
+    extrapolation = (get_config(dir_name).get("data") or {}).get("extrapolation")
+    if extrapolation is None:
+        return None
+    path = os.path.join(base_dir, extrapolation.path)
+    data = np.load(path, mmap_mode="r")
+    if steps > data.shape[1] or num_variations > data.shape[0]:
+        raise ValueError(
+            f"{path} has {data.shape[0]} trajectories of {data.shape[1]} steps; "
+            f"{num_variations} of {steps} were requested"
+        )
+    data = np.array(data[:num_variations, :steps]) * get_norms(dir_name).numpy()
+    return data[:, :1].astype(np.float32), data[:, 1:].astype(np.float32)
 
 
 def run_model_inference(models, model_input, num_steps):
@@ -215,9 +242,12 @@ def run_settings(cfg):
     original layer and joint clipping.
     """
     return {
-        "gamma": cfg.solver.gamma,
-        "kappa": cfg.solver.kappa,
-        "damping": cfg.solver.damping.name,
+        "dataset": OmegaConf.select(cfg, "data.name")
+        or default_dataset_name(cfg.solver),
+        # None for solvers without these parameters (wave2d)
+        "gamma": OmegaConf.select(cfg, "solver.gamma"),
+        "kappa": OmegaConf.select(cfg, "solver.kappa"),
+        "damping": OmegaConf.select(cfg, "solver.damping.name"),
         "ic_train": cfg.train.ic,
         "seed_train": cfg.train.random_seed,
         "full_spectrum": bool(cfg.nnarch.get("full_spectrum", False)),
@@ -225,17 +255,27 @@ def run_settings(cfg):
     }
 
 
+def default_dataset_name(solver):
+    """Dataset name of runs saved before data.name existed (gamma and kappa only)."""
+    return f"gamma_{solver['gamma']}-kappa_{solver['kappa']}"
+
+
 VARIANT_DEFAULTS = {"full_spectrum": False, "clip_jointly": True}
 
 
 def with_variant_columns(df):
-    """Copy of df with the run-variant columns, filled with the defaults of
-    run_settings for rows saved before these settings existed."""
+    """Copy of df with the dataset and run-variant columns, filled with the
+    defaults of run_settings for rows saved before these settings existed."""
     df = df.copy()
     for column, default in VARIANT_DEFAULTS.items():
         if column not in df:
             df[column] = default
         df[column] = df[column].fillna(default).astype(bool)
+    if "dataset" not in df:
+        df["dataset"] = None
+    missing = df["dataset"].isna()
+    if missing.any():
+        df.loc[missing, "dataset"] = df[missing].apply(default_dataset_name, axis=1)
     return df
 
 
@@ -260,23 +300,64 @@ def label_variants(df):
     return df
 
 
-def calculate_mse_crossval(dir_name, ic_eval=["pluck", "random"], num_seeds=3):
+def validation_seeds(dir_name, ic_name, num_seeds=None):
+    """Seeds whose validation data crossval evaluates for an initial condition.
+
+    num_seeds=None takes every seed_<n> directory next to the matching run.
+    """
+    if num_seeds is not None:
+        return range(num_seeds)
+    first = get_val_data_path(dir_name, ic_name=ic_name, seed=0)
+    if first is None or not first.parent.is_dir():
+        return []
+    return sorted(
+        int(p.name.removeprefix("seed_"))
+        for p in first.parent.glob("seed_*")
+        if p.name.removeprefix("seed_").isdigit()
+    )
+
+
+def dataset_path(dir_name):
+    """data.path of a run, or None for runs saved before it existed."""
+    data = get_config(dir_name).get("data")
+    return None if data is None else data.get("path")
+
+
+def repeats_own_dataset(dir_name, other_dir):
+    """True when other_dir is another run trained on the same dataset file, so its
+    validation data repeats the run's own."""
+    if pathlib.Path(other_dir).resolve() == pathlib.Path(dir_name).resolve():
+        return False
+    if not (pathlib.Path(other_dir) / ".hydra").is_dir():
+        return False
+    own = dataset_path(dir_name)
+    return own is not None and own == dataset_path(other_dir)
+
+
+def calculate_mse_crossval(dir_name, ic_eval=None, num_seeds=None):
+    """MSE of the run's models on the validation data of every seed (and initial
+    condition) of the same experiment, once per distinct dataset.
+
+    ic_eval=None evaluates the run's own initial condition, plus pluck and random.
+    Runs of other seeds that share the run's dataset are skipped, since their
+    validation data is the run's own.
+    """
     cfg = get_config(dir_name)
+    if ic_eval is None:
+        ic_eval = list(dict.fromkeys([cfg.train.ic, "pluck", "random"]))
     output_dir = dir_name
     model_gru, model_rnn, model_ref = load_models_from_dir(dir_name)
     normalization_multiplier_model = get_norms(dir_name)
-    # Set torch device if posible if not cpu
-    if torch.cuda.is_available() and cfg.train.device == "cuda":
-        device = torch.device(cfg.train.device)
-    else:
-        device = torch.device("cpu")
+    device = get_device(cfg)
 
     results = []
     for ic_name in ic_eval:
-        for seed in range(num_seeds):
+        for seed in validation_seeds(dir_name, ic_name, num_seeds):
             # get the validation data
             val_data_dir = get_val_data_path(dir_name, ic_name=ic_name, seed=seed)
             if val_data_dir is None:
+                continue
+            if repeats_own_dataset(dir_name, val_data_dir):
                 continue
             if not os.path.exists(val_data_dir):
                 continue
@@ -361,6 +442,11 @@ def rename_model(model_name):
         return "REF"
     else:
         return model_name
+
+
+def format_parameter(x):
+    """PDE parameter for the tables; "-" when the run's solver does not have it."""
+    return "-" if x is None or pd.isna(x) else f"{x:.1f}"
 
 
 def format_mse(x, tol=5.0):

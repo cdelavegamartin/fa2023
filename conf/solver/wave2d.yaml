@@ -1,0 +1,7 @@
+# FTM 2D wave equation of Parker et al. (2022): sound pressure and particle
+# velocities on [0, 1] x [0, domain.aspect_ratio], rigid walls, 25 modes per axis.
+name: wave2d
+c0: 340
+modes: 25
+num_state_variables: 3
+dataset_name: wave2d_ftm

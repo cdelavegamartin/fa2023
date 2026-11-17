@@ -29,9 +29,10 @@ def main(cfg: DictConfig):
         "training_split": {"mean": mean.tolist(), "std": std.tolist()},
         "domain": cfg.domain,
         "solver": cfg.solver,
+        "seed": cfg.data.seed,
         "train": {
             key: cfg.train[key]
-            for key in ("num_variations", "num_steps_train", "val_split", "ic", "random_seed")
+            for key in ("num_variations", "num_steps_train", "val_split", "ic")
         },
     }
     OmegaConf.save(OmegaConf.create(info), os.path.splitext(path)[0] + ".yaml")

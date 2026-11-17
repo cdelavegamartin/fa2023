@@ -46,12 +46,13 @@ def train(cfg: DictConfig):
     # not depend on which other models a run trains
     all_models = build_models(cfg, size_x, size_y, device, seed=cfg.train.random_seed)
     models = {name: all_models[name] for name in cfg.train.models}
-    torch.manual_seed(cfg.train.random_seed)  # same batch order whatever the models
 
+    # The batch order depends only on the dataset seed, not on the models or their seed
     dataloader = torch.utils.data.DataLoader(
         torch.utils.data.TensorDataset(training_input, training_output),
         batch_size=batch_size,
         shuffle=True,
+        generator=torch.Generator().manual_seed(cfg.data.seed),
     )
     # One optimiser and scheduler per model, so that models can train in separate runs
     assert cfg.train.optimizer.name == "AdamW"

@@ -9,6 +9,7 @@ import pandas as pd
 
 from platefno.util.conf import get_config
 from platefno.util.eval import (
+    get_device,
     get_run_dirs,
     read_feather,
     calculate_mse_per_timestep,
@@ -19,6 +20,7 @@ from platefno.util.eval import (
     format_mse,
     create_mean_std,
     combine_gamma_kappa,
+    format_parameter,
     label_variants,
     with_variant_columns,
     VARIANT_DEFAULTS,
@@ -30,11 +32,7 @@ def evaluate_run(dir_name):
     model_gru, model_rnn, model_ref = load_models_from_dir(dir_name)
     cfg = get_config(dir_name)
 
-    # Set torch device if posible if not cpu
-    if torch.cuda.is_available() and cfg.train.device == "cuda":
-        device = torch.device(cfg.train.device)
-    else:
-        device = torch.device("cpu")
+    device = get_device(cfg)
 
     validation_input, validation_output = load_data(dir_name)
     validation_input = validation_input.to(device)
@@ -91,7 +89,7 @@ def create_latex_table_val_results(
     # average over seeds, keeping the run variants apart
     df = with_variant_columns(df)
     df_filtered = (
-        df.groupby(["model", *VARIANT_DEFAULTS, "gamma", "kappa", "ic_train", "ic_eval"])
+        df.groupby(["dataset", "model", *VARIANT_DEFAULTS, "gamma", "kappa", "ic_train", "ic_eval"], dropna=False)
         .agg({"mse_u": ["mean", "std"], "mse_v": ["mean", "std"]})
         .reset_index()
     )
@@ -124,7 +122,7 @@ def create_latex_table_val_results_alt(
     df = label_variants(df)
     # average over seeds
     df_filtered = (
-        df.groupby(["model", "gamma", "kappa", "ic_train", "ic_eval"])
+        df.groupby(["dataset", "model", "gamma", "kappa", "ic_train", "ic_eval"], dropna=False)
         .agg({"mse_u": ["mean", "std"], "mse_v": ["mean", "std"]})
         .reset_index()
     )
@@ -191,7 +189,7 @@ def create_latex_table_val_results_single_ic(
     df = label_variants(df)
     # average over seeds
     df_filtered = (
-        df.groupby(["model", "gamma", "kappa", "ic_train", "ic_eval"])
+        df.groupby(["dataset", "model", "gamma", "kappa", "ic_train", "ic_eval"], dropna=False)
         .agg({"mse_u": ["mean", "std"], "mse_v": ["mean", "std"]})
         .reset_index()
     )
@@ -207,17 +205,18 @@ def create_latex_table_val_results_single_ic(
     # format the model column
     df_filtered["model"] = df_filtered["model"].apply(rename_model)
     # format the gamma and kappa columns
-    df_filtered["gamma"] = df_filtered["gamma"].apply(lambda x: f"{x:.1f}")
-    df_filtered["kappa"] = df_filtered["kappa"].apply(lambda x: f"{x:.1f}")
+    df_filtered["gamma"] = df_filtered["gamma"].apply(format_parameter)
+    df_filtered["kappa"] = df_filtered["kappa"].apply(format_parameter)
     # Combine gamma and kappa for display
     # df_filtered = combine_gamma_kappa(df_filtered)
     #  change the order of the columns
     df_filtered.sort_values(by=["model"], inplace=True)
     df_filtered.sort_values(by=["kappa"], inplace=True)
     df_filtered.sort_values(by=["gamma"], inplace=True)
+    df_filtered.sort_values(by=["dataset"], inplace=True, kind="stable")
 
     # df_filtered.set_index(["gamma_kappa", "model"], inplace=True)
-    df_filtered.set_index(["gamma", "kappa", "model"], inplace=True)
+    df_filtered.set_index(["dataset", "gamma", "kappa", "model"], inplace=True)
     # rename columns
     df_filtered.rename(
         columns={
@@ -226,7 +225,7 @@ def create_latex_table_val_results_single_ic(
         },
         inplace=True,
     )
-    df_filtered.rename_axis(["$\gamma$", "$\kappa$", "Model"], inplace=True)
+    df_filtered.rename_axis(["Dataset", "$\gamma$", "$\kappa$", "Model"], inplace=True)
 
     # df_filtered.drop(columns=["gamma", "kappa"], inplace=True)
     print(df_filtered)
@@ -266,12 +265,13 @@ if __name__ == "__main__":
         evaluate_run(run_dir)
 
     df = aggregate_experiment_val_results(dir_name)
-    ic = "pluck"
-    create_latex_table_val_results_single_ic(
-        df,
-        ic=ic,
-        file=os.path.join(dir_name, f"val_{ic}.tex"),
-    )
+    # One table per initial condition the runs were trained on
+    for ic in df["ic_train"].unique():
+        create_latex_table_val_results_single_ic(
+            df,
+            ic=ic,
+            file=os.path.join(dir_name, f"val_{ic}.tex"),
+        )
 
     timer_end = time.time()
     print(f"Elapsed time: {timer_end - timer_start} seconds")
