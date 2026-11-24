@@ -63,7 +63,7 @@ Each model has its own optimiser and learning-rate schedule, and its own initial
 
 ### Full sweep: spectrum and gradient clipping
 `slurm/fullsweep.sbatch` trains 6 datasets x seeds 0–2 x {original, full-spectrum} FourierConv2d x {joint, separate} gradient clipping, as 144 SLURM array tasks, one per line of `slurm/fullsweep_runs.txt`:
-- datasets: the 4 (gamma, kappa) of the paper; the plate solver with the parameters of the 2D wave equation of Parker et al. (gamma = 340, kappa = 0, no damping, mixed initial conditions; the boundary conditions differ); the 2D wave equation of Parker et al. itself (`solver=wave2d`: FTM, 25 modes, 3 channels, half impulses and half random initial conditions) with 40 steps;
+- datasets: the 4 (gamma, kappa) of the paper; the plate solver with the parameters of the 2D wave equation of Parker et al. (gamma = 340, kappa = 0, no damping, plucks; the boundary conditions differ); the 2D wave equation of Parker et al. itself (`solver=wave2d`: FTM, 25 modes, 3 channels, half impulses and half random initial conditions) with 40 steps;
 - joint clipping trains FGRU, FRNN and REF in one task; separate clipping trains one model per task, and the three tasks share the run directory;
 - runs go to `$FA2023_OUTPUT/fullspectrumsweep/<data.name>/ic_<ic>/full_spectrum_<bool>-clip_jointly_<bool>/seed_<n>`.
 

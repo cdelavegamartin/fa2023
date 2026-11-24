@@ -2,5 +2,5 @@ solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=0.1
 solver/damping=freqdependent train.ic=pluck solver.gamma=1.0 solver.kappa=1.0
 solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=0.1
 solver/damping=freqdependent train.ic=pluck solver.gamma=100.0 solver.kappa=1.0
-solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=mix
+solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=pluck
 solver=wave2d train.ic=impulse_random

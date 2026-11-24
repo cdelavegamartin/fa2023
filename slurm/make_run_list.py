@@ -25,7 +25,7 @@ DATASETS = {
     "plate, gamma=100, kappa=0.1": f"{PLATE} solver.gamma=100.0 solver.kappa=0.1",
     "plate, gamma=100, kappa=1": f"{PLATE} solver.gamma=100.0 solver.kappa=1.0",
     # Plate solver with the parameters of the 2D wave equation of Parker et al.
-    "plate as 2D wave": f"{WAVE} train.ic=mix",
+    "plate as 2D wave": f"{WAVE} train.ic=pluck",
     # FTM 2D wave equation of Parker et al. (conf/solver/wave2d.yaml)
     "FTM 2D wave": "solver=wave2d train.ic=impulse_random",
 }
