@@ -1,6 +1,6 @@
 #!/bin/bash
-# Full sweep: one array task per line of slurm/fullsweep_runs.txt (288 lines, made by
-# slurm/make_run_list.py): 6 datasets x seeds 0-5 x {original, full-spectrum}
+# Full sweep: one array task per line of slurm/fullsweep_runs.txt (144 lines, made by
+# slurm/make_run_list.py): 6 datasets x seeds 0-2 x {original, full-spectrum}
 # FourierConv2d x {joint clipping (FGRU, FRNN and REF in one task), separate clipping
 # (one task per model)}.
 # Outputs (runs and datasets) go to $FA2023_OUTPUT, e.g. a scratch directory; the job
@@ -10,7 +10,7 @@
 #   export FA2023_OUTPUT=/path/to/scratch/fa2023
 #   sbatch slurm/fullsweep.sbatch                 # all runs
 #   sbatch -a 1-4 slurm/fullsweep.sbatch          # a subset of lines
-#   sbatch -a 1-288%40 slurm/fullsweep.sbatch     # at most 40 tasks at a time
+#   sbatch -a 1-144%40 slurm/fullsweep.sbatch     # at most 40 tasks at a time
 # Arguments after the script name go to train_2d_plate.py, e.g. train.epochs=1.
 #SBATCH -J fa2023-fullsweep
 #SBATCH -o %x.o%A_%a           # jobname.o<job id>_<array index>
@@ -23,7 +23,7 @@
 #SBATCH --gres=gpu:1           # 1 GPU; batch 400 needs up to ~35 GB of GPU memory
 #SBATCH --mail-type=END,FAIL
 #SBATCH --constraint="ampere|hopper"
-#SBATCH -a 1-288
+#SBATCH -a 1-144
 
 set -euo pipefail
 set -f # no globbing: the overrides contain brackets, e.g. train.models=[gru]

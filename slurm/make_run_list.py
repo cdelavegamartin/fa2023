@@ -1,7 +1,7 @@
 """Write the run list of slurm/fullsweep.sbatch and the dataset list of
 slurm/generate_datasets.sh (the overrides that select each dataset).
 
-Runs: 6 datasets x 6 seeds x {original, full-spectrum} FourierConv2d x {joint,
+Runs: 6 datasets x 3 seeds x {original, full-spectrum} FourierConv2d x {joint,
 separate} gradient clipping. A joint-clipping run trains FGRU, FRNN and REF in one
 task; a separate-clipping run is split into one task per model, all writing to the
 same run directory.
@@ -29,7 +29,7 @@ DATASETS = {
     # FTM 2D wave equation of Parker et al. (conf/solver/wave2d.yaml)
     "FTM 2D wave": "solver=wave2d train.ic=impulse_random",
 }
-SEEDS = range(6)
+SEEDS = range(3)
 MODELS = ("gru", "rnn", "ref")
 
 
