@@ -259,8 +259,9 @@ def plot_combined_extrapolation(dir_name, steps=100, num_variations=10, seed=0, 
 
     # If the model seed is 0, take the highlighted IC and plot it
     if highlight is not None:
-        output_sequence_gru, output_sequence_rnn, output_sequence_ref = run_model_inference((model_gru, model_rnn, model_ref), model_input[:, 0, ...], ground_truth_output.shape[1])
-        fig2, axs2 = plot_run_output_single_ic(ground_truth_output[highlight, ...], (output_sequence_gru[highlight, ...], output_sequence_rnn[highlight, ...], output_sequence_ref[highlight, ...]),plot_steps=plot_steps,fs=fs)
+        # run the models on the highlighted IC only
+        outputs = run_model_inference((model_gru, model_rnn, model_ref), model_input[highlight : highlight + 1, 0, ...], ground_truth_output.shape[1])
+        fig2, axs2 = plot_run_output_single_ic(ground_truth_output[highlight, ...], tuple(output[0, ...] for output in outputs), plot_steps=plot_steps, fs=fs)
         fig2.savefig(
             os.path.join(dir_name, f"highlighted_ic_plot_steps_{steps}_h{highlight}.pdf"),
             bbox_inches="tight",

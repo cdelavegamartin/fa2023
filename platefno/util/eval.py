@@ -74,19 +74,10 @@ def load_models_from_dir(dir_name):
         cfg, size_x, size_y, device
     ).values()
 
-    # Load the models
-    # print(f"Load GRU model")
-    model_gru.load_state_dict(
-        torch.load(os.path.join(output_dir, "model", "model_gru.pth"))
-    )
-    # print(f"Load RNN model")
-    model_rnn.load_state_dict(
-        torch.load(os.path.join(output_dir, "model", "model_rnn.pth"))
-    )
-    # print(f"Load Ref model")
-    model_ref.load_state_dict(
-        torch.load(os.path.join(output_dir, "model", "model_ref.pth"))
-    )
+    # Load the weights onto the evaluation device, also when they were saved on another
+    for name, model in zip(("gru", "rnn", "ref"), (model_gru, model_rnn, model_ref)):
+        path = os.path.join(output_dir, "model", f"model_{name}.pth")
+        model.load_state_dict(torch.load(path, map_location=device))
     return model_gru, model_rnn, model_ref
 
 
@@ -145,31 +136,20 @@ def run_model_inference(models, model_input, num_steps):
 
 
 def calculate_mse_per_timestep(models, validation_input, validation_output):
-    output_sequence_gru, output_sequence_rnn, output_sequence_ref = run_model_inference(
-        models, validation_input[:, 0, ...], validation_output.shape[1]
-    )
+    """MSE per IC, time step and state variable, (num_ICs, num_timesteps,
+    num_state_variables) numpy arrays, one per model.
 
-    # Calculate MSE per timestep, per IC, these are tensors of shape (num_ICs, num_timesteps, num_state_variables)
-    val_gru_mse = (
-        torch.mean((output_sequence_gru - validation_output) ** 2, dim=(2, 3))
-        .detach()
-        .cpu()
-        .numpy()
-    )
-    val_rnn_mse = (
-        torch.mean((output_sequence_rnn - validation_output) ** 2, dim=(2, 3))
-        .detach()
-        .cpu()
-        .numpy()
-    )
-    val_ref_mse = (
-        torch.mean((output_sequence_ref - validation_output) ** 2, dim=(2, 3))
-        .detach()
-        .cpu()
-        .numpy()
-    )
-
-    return (val_gru_mse, val_rnn_mse, val_ref_mse)
+    Runs one model at a time, so only one output sequence is in memory at once.
+    """
+    results = []
+    with torch.no_grad():
+        for model in models:
+            model.eval()
+            output_sequence = model(validation_input[:, 0, ...], validation_output.shape[1])
+            mse = torch.mean((output_sequence - validation_output) ** 2, dim=(2, 3))
+            results.append(mse.cpu().numpy())
+            del output_sequence
+    return tuple(results)
 
 
 def calculate_mse(models, validation_input, validation_output):
