@@ -67,6 +67,8 @@ Each model has its own optimiser and learning-rate schedule, and its own initial
 - joint clipping trains FGRU, FRNN and REF in one task; separate clipping trains one model per task, and the three tasks share the run directory;
 - runs go to `$FA2023_OUTPUT/fullspectrumsweep/<data.name>/ic_<ic>/full_spectrum_<bool>-clip_jointly_<bool>/seed_<n>`.
 
+Results and caveats: [`docs/results/full-spectrum-sweep/README.md`](docs/results/full-spectrum-sweep/README.md).
+
 `slurm/make_run_list.py` writes the run list and `slurm/fullsweep_datasets.txt`; it checks that every line fixes every swept setting of `conf/experiment/fullspectrumsweep.yaml`.
 
 From the repository root, after `uv sync --extra cu126`:
