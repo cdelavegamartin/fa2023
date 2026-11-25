@@ -74,19 +74,10 @@ def load_models_from_dir(dir_name):
         cfg, size_x, size_y, device
     ).values()
 
-    # Load the models
-    # print(f"Load GRU model")
-    model_gru.load_state_dict(
-        torch.load(os.path.join(output_dir, "model", "model_gru.pth"))
-    )
-    # print(f"Load RNN model")
-    model_rnn.load_state_dict(
-        torch.load(os.path.join(output_dir, "model", "model_rnn.pth"))
-    )
-    # print(f"Load Ref model")
-    model_ref.load_state_dict(
-        torch.load(os.path.join(output_dir, "model", "model_ref.pth"))
-    )
+    # Load the weights onto the evaluation device, also when they were saved on another
+    for name, model in zip(("gru", "rnn", "ref"), (model_gru, model_rnn, model_ref)):
+        path = os.path.join(output_dir, "model", f"model_{name}.pth")
+        model.load_state_dict(torch.load(path, map_location=device))
     return model_gru, model_rnn, model_ref
 
 
