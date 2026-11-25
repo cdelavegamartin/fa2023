@@ -14,7 +14,7 @@ hydra:
       train.batch_size: 400
       train.num_variations: 1024
       train.num_steps_train: 40
-      train.random_seed: 0, 1, 2, 3, 4, 5
+      train.random_seed: 0, 1, 2
       nnarch.full_spectrum: false, true
       train.clip_jointly: true, false
 
