@@ -29,6 +29,13 @@ The paper generated one dataset per seed; `'data.seed=${train.random_seed}'` res
 ```uv run python generate_dataset.py -m +experiment=pdeparamsweep solver/damping=freqdependent train.num_variations=30 train.num_steps_train=2000 data.seed=5 hydra.sweep.dir=output/generate_dataset```
 Runs without `data.extrapolation` in their saved configuration simulate the extrapolation data instead.
 
+`solver=modalplate` solves the same plate (grid, damping, simply supported edges, initial conditions) exactly in its sine modes, without the numerical dispersion of the finite-difference stencil; its datasets go to `datasets/modalplate_gamma_<gamma>-kappa_<kappa>-damping_<damping>/`.
+For example, the plate with the parameters of the 2D wave equation, plucks, training and extrapolation sets:
+```bash
+uv run python generate_dataset.py -m solver=modalplate solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=pluck hydra.sweep.dir=output/generate_dataset
+uv run python generate_dataset.py -m solver=modalplate solver/damping=nodamping solver.gamma=340.0 solver.kappa=0.0 train.ic=pluck train.num_variations=30 train.num_steps_train=2000 data.seed=5 hydra.sweep.dir=output/generate_dataset
+```
+
 Training standardises the data as `(data - data.mean) / data.std` per channel.
 `data.mean` defaults to 0 (scale only, as in the paper; the evaluation scripts assume it) and `data.std` to the std of the training split, e.g. `'data.std=[0.04,130.0]'` fixes it.
 The paper's runs used the std of the output steps of all trajectories, validation included, so the scale differs slightly unless `data.std` is set.

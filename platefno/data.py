@@ -3,14 +3,16 @@
 A dataset is one raw (unnormalised) array of shape
 (trajectories, time steps, x, y, channels), saved as .npy by generate_dataset.py.
 solver.name selects the system: "linearplate" (finite-difference stiff plate,
-channels displacement and velocity) or "wave2d" (FTM 2D wave equation of Parker et
-al., channels pressure and the two particle velocities).
+channels displacement and velocity), "modalplate" (the same plate, solved exactly in
+its modes) or "wave2d" (FTM 2D wave equation of Parker et al., channels pressure and
+the two particle velocities).
 """
 
 import numpy as np
 import torch
 
 from platefno.solver.linear_plate_solver import LinearPlateSolver
+from platefno.solver.modal_plate_solver import ModalPlateSolver
 from platefno.solver.wave_solver_2d import WaveSolver2D
 from platefno.util.conf import get_t60
 
@@ -32,7 +34,8 @@ def make_solver(cfg, num_steps=None):
             c0=cfg.solver.c0,
             modes=cfg.solver.modes,
         )
-    return LinearPlateSolver(
+    plate = ModalPlateSolver if cfg.solver.name == "modalplate" else LinearPlateSolver
+    return plate(
         SR=fs,
         TF=duration,
         gamma=cfg.solver.gamma,

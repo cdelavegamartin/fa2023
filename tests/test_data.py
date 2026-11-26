@@ -56,3 +56,14 @@ def test_output_root_follows_environment(monkeypatch):
     assert config().data.path.startswith("/scratch/user/fa2023/datasets/")
     monkeypatch.delenv("FA2023_OUTPUT")
     assert config().data.path.startswith("output/datasets/")
+
+
+def test_modalplate_has_the_initial_conditions_of_linearplate():
+    plate = ("solver/damping=nodamping", "solver.gamma=340.0", "solver.kappa=0.0", "train.ic=pluck")
+    fd = simulate(config(*plate))
+    modal_cfg = config("solver=modalplate", *plate)
+    modal = simulate(modal_cfg)
+    assert modal.shape == fd.shape
+    assert np.allclose(modal[:, 0], fd[:, 0], atol=1e-6)
+    assert not np.allclose(modal[:, -1], fd[:, -1], atol=1e-6)
+    assert modal_cfg.solver.dataset_name == "modalplate_gamma_340.0-kappa_0.0-damping_nodamping"
