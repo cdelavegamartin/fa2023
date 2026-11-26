@@ -68,6 +68,7 @@ Each model has its own optimiser and learning-rate schedule, and its own initial
 - runs go to `$FA2023_OUTPUT/fullspectrumsweep/<data.name>/ic_<ic>/full_spectrum_<bool>-clip_jointly_<bool>/seed_<n>`.
 
 Results and caveats: [`docs/results/full-spectrum-sweep/README.md`](docs/results/full-spectrum-sweep/README.md).
+Comparison of the plate gamma=340 and FTM datasets: [`docs/results/plate-vs-wave2d-spectra/README.md`](docs/results/plate-vs-wave2d-spectra/README.md).
 
 `slurm/make_run_list.py` writes the run list and `slurm/fullsweep_datasets.txt`; it checks that every line fixes every swept setting of `conf/experiment/fullspectrumsweep.yaml`.
 
