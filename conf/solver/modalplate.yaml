@@ -1,0 +1,11 @@
+# The plate of linearplate.yaml, solved exactly in its sine modes (ModalPlateSolver):
+# no numerical dispersion; same grid, damping and initial conditions.
+defaults:
+  - damping: constant
+  - _self_
+
+name: modalplate
+gamma: 100
+kappa: 0.1
+num_state_variables: 2
+dataset_name: modalplate_gamma_${solver.gamma}-kappa_${solver.kappa}-damping_${solver.damping.name}
